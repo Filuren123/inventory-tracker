@@ -26,3 +26,7 @@ dist-ssr
 apps/*/node_modules
 apps/*/dist
 apps/*/package-lock.json
+
+# Server
+.env
+package-lock.json
