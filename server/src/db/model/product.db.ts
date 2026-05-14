@@ -1,10 +1,10 @@
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes } from 'sequelize'
 import { sequelize } from '../conn'
-import { CategoryModel } from './Category'
+import { CategoryModel } from './category.db'
 
 export class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAttributes<ProductModel>> {
   declare product_id: CreationOptional<number>
-  declare ean_code: bigint
+  declare ean_code: CreationOptional<bigint | null>
   declare name: string
   declare brand: CreationOptional<string | null>
   declare category_id: CreationOptional<number | null>
@@ -25,7 +25,7 @@ ProductModel.init(
     },
     ean_code: {
       type: DataTypes.BIGINT,
-      allowNull: false,
+      allowNull: true,
       unique: true,
     },
     name: {

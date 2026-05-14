@@ -1,14 +1,13 @@
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes } from 'sequelize'
 import { sequelize } from '../conn'
-import { UserModel } from './User'
-import { ProductModel } from './Product'
+import { UserModel } from './user.db'
+import { ProductModel } from './product.db'
 
 export class TransactionModel extends Model<InferAttributes<TransactionModel>, InferCreationAttributes<TransactionModel>> {
   declare id: CreationOptional<number>
   declare user_id: number
   declare product_id: number
   declare action: 'scan_in' | 'scan_out'
-  declare quantity: number
   declare scanned_at: CreationOptional<Date>
   declare note: CreationOptional<string | null>
 }
@@ -39,11 +38,6 @@ TransactionModel.init(
     action: {
       type: DataTypes.ENUM('scan_in', 'scan_out'),
       allowNull: false,
-    },
-    quantity: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 1,
     },
     scanned_at: {
       type: DataTypes.DATE,

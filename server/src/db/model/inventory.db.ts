@@ -1,6 +1,6 @@
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes } from 'sequelize'
 import { sequelize } from '../conn'
-import { ProductModel } from './Product'
+import { ProductModel } from './product.db'
 
 export class InventoryModel extends Model<InferAttributes<InventoryModel>, InferCreationAttributes<InventoryModel>> {
   declare id: CreationOptional<number>
