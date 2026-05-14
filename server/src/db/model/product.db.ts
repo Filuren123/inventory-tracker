@@ -14,6 +14,7 @@ export class ProductModel extends Model<InferAttributes<ProductModel>, InferCrea
   declare unit: CreationOptional<string | null>
   declare min_price: CreationOptional<number | null>
   declare min_price_location: CreationOptional<string | null>
+  declare link: CreationOptional<string | null>
 }
 
 ProductModel.init(
@@ -67,6 +68,10 @@ ProductModel.init(
     },
     min_price_location: {
       type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    link: {
+      type: DataTypes.STRING(500),
       allowNull: true,
     },
   },

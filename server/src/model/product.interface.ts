@@ -10,4 +10,5 @@ export interface Product {
     unit: string | null;
     min_price: number | null;
     min_price_location: string | null;
+    link: string | null;
 }
