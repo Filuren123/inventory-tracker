@@ -12,7 +12,11 @@ userRouter.get(
     req: Request<{ username: string }, {}, {}>,
     res: Response<User>
     ) => {
-        const user: User = await userService.getUserByUsername(req.params.username);
-        return user;
+        try {
+            const user: User = await userService.getUserByUsername(req.params.username);
+            res.status(200).send(user);
+        } catch (error: any) {
+            res.status(500).send(error.message);
+        }
     }
 );
