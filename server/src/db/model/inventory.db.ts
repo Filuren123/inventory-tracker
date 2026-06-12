@@ -6,6 +6,7 @@ export class InventoryModel extends Model<InferAttributes<InventoryModel>, Infer
   declare id: CreationOptional<number>
   declare product_id: number
   declare storage_location: string
+  declare quantity: CreationOptional<string>
   declare expiry_date: CreationOptional<Date | null>
   declare purchase_date: CreationOptional<Date | null>
 }
@@ -28,6 +29,10 @@ InventoryModel.init(
     storage_location: {
       type: DataTypes.STRING(100),
       allowNull: false,
+    },
+    quantity: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
     },
     expiry_date: {
       type: DataTypes.DATEONLY,
