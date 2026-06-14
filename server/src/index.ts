@@ -1,7 +1,7 @@
 import { sequelize } from './db/conn';
 import { app } from './start';
 
-const PORT: number = 8080;
+const PORT: number = Number(process.env.PORT ?? 8080);
 
 (async () => {
     try {
