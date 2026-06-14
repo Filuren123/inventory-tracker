@@ -1,6 +1,6 @@
 export interface Product {
     product_id: number;
-    ean_code: bigint | null;
+    ean_code: string | null;
     name: string;
     brand: string | null;
     category_id: number | null;

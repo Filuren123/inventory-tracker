@@ -4,7 +4,7 @@ import { CategoryModel } from './category.db'
 
 export class ProductModel extends Model<InferAttributes<ProductModel>, InferCreationAttributes<ProductModel>> {
   declare product_id: CreationOptional<number>
-  declare ean_code: CreationOptional<bigint | null>
+  declare ean_code: CreationOptional<string | null>
   declare name: string
   declare brand: CreationOptional<string | null>
   declare category_id: CreationOptional<number | null>
@@ -25,7 +25,7 @@ ProductModel.init(
       primaryKey: true,
     },
     ean_code: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.STRING(20),
       allowNull: true,
       unique: true,
     },
