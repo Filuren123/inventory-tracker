@@ -6,6 +6,7 @@ import cors from 'cors';
 import { userRouter } from './router/user.router';
 import { inventoryRouter } from './router/inventory.router';
 import { productRouter } from './router/product.router';
+import { categoryRouter } from './router/category.router';
 
 dotenv.config();
 
@@ -24,3 +25,4 @@ app.use((req, res, next) => {
 app.use('/user', userRouter);
 app.use('/inventory', inventoryRouter);
 app.use('/product', productRouter);
+app.use('/categories', categoryRouter);
