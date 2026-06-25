@@ -1,0 +1,34 @@
+article {
+    width: 100%;
+    background: var(--secondary);
+    padding: 2em;
+    border-bottom: 2px solid var(--border-col);
+}
+
+.heading {
+    display: flex;
+    justify-content: space-between;
+}
+
+.firstsec {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.category {
+    border: 1px solid var(--border-col);
+    border-radius: var(--border-rad);
+    padding: 0.5em 1em;
+    background: var(--accent);
+}
+
+.secsec {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+button.btn {
+    font-size: 1.4em;
+}

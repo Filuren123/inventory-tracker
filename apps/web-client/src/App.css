@@ -4,12 +4,13 @@ main {
 }
 
 aside {
-	width: 30%;
-	background: var(--secondary);
+	min-width: 30%;
+	background: var(--primary);
 	padding: 1rem;
 }
 
 section {
 	display: flex;
 	flex-direction: column;
+	width: 100%;
 }

@@ -4,7 +4,9 @@
     --primary: #ccd5ae;
     --secondary: #faedcd;
     --contra: #d4a373;
-    --accent: #606c38;
+    --accent: #8cd679;
+    --border-col: #333333;
+    --border-rad: 5px;
     --shadow:
         rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
@@ -29,4 +31,8 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--heading);
 }
