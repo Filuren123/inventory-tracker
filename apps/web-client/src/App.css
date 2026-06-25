@@ -1,0 +1,15 @@
+main {
+	display: flex;
+	min-height: 100vh;
+}
+
+aside {
+	width: 30%;
+	background: var(--secondary);
+	padding: 1rem;
+}
+
+section {
+	display: flex;
+	flex-direction: column;
+}
