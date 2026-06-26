@@ -29,8 +29,8 @@ export class InventoryService {
      * Fetch all inventory items
      */
     async getAllInventory(): Promise<InventoryWithProduct[]> {
-        // Cast to unknown then to Inventory[] to seamlessly align the Sequelize Model array with your Interface array
-        const inventory = await InventoryModel.findAll() as Inventory[];
+        const instances: InventoryModel[] = await InventoryModel.findAll();
+        const inventory: Inventory[] = instances.map(item => item.get({ plain: true }));
 
         return this.convertToInventoryWithProductArray(inventory);
     }
@@ -39,8 +39,9 @@ export class InventoryService {
      * Fetch a specific inventory item by its primary key ID
      */
     async getInventoryById(id: string | number): Promise<InventoryWithProduct | null> {
-        const inventoryItem = await InventoryModel.findByPk(id);
-        if (!inventoryItem) return null;
+        const instance: InventoryModel | null = await InventoryModel.findByPk(id);
+        if (!instance) return null;
+        const inventoryItem: Inventory = instance.get({ plain: true });
         return this.convertToInventoryWithProduct(inventoryItem);
     }
 
@@ -54,7 +55,7 @@ export class InventoryService {
         expiry_date?: string;
         purchase_date?: string;
     }): Promise<InventoryWithProduct> {
-        const newInventory = await InventoryModel.create({
+        const newInventory: InventoryModel = await InventoryModel.create({
             product_id: data.product_id,
             storage_location: data.storage_location,
             quantity: data.quantity,
@@ -64,6 +65,7 @@ export class InventoryService {
                 : null,
         });
 
+        const newInventoryObj: Inventory = newInventory.get({ plain: true });
         return this.convertToInventoryWithProduct(newInventory);
     }
 
@@ -80,7 +82,7 @@ export class InventoryService {
             purchase_date?: string | null;
         },
     ): Promise<InventoryWithProduct | null> {
-        const inventoryItem = await InventoryModel.findByPk(id);
+        const inventoryItem: InventoryModel | null = await InventoryModel.findByPk(id);
         if (!inventoryItem) return null;
 
         await inventoryItem.update({
@@ -102,6 +104,7 @@ export class InventoryService {
                     : inventoryItem.purchase_date,
         });
 
+        const inventoryItemObj: Inventory = inventoryItem.get({ plain: true });
         return this.convertToInventoryWithProduct(inventoryItem);
     }
 
@@ -109,7 +112,7 @@ export class InventoryService {
      * Delete an inventory record by ID
      */
     async deleteInventory(id: string | number): Promise<boolean> {
-        const inventoryItem = await InventoryModel.findByPk(id);
+        const inventoryItem: InventoryModel | null = await InventoryModel.findByPk(id);
         if (!inventoryItem) return false;
 
         await inventoryItem.destroy();

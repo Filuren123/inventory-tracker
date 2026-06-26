@@ -1,5 +1,5 @@
 import './App.css'
-import Product from './components/product/Product'
+import InventoryProduct from './components/inventoryProduct/InventoryProduct'
 
 function App() {
   return (
@@ -9,9 +9,9 @@ function App() {
           
         </aside>
         <section>
-          <Product />
-          <Product />
-          <Product />
+          <InventoryProduct />
+          <InventoryProduct />
+          <InventoryProduct />
         </section>
       </main>
     </>
