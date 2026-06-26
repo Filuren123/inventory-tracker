@@ -1,23 +1,47 @@
 import { InventoryModel } from '../db/model/inventory.db';
 import { Inventory } from '../model/inventory.interface';
+import { Product } from '../model/product.interface';
+import { InventoryWithProduct } from '../model/InventoryWithProduct.interface';
+import { ProductService } from './product.service';
 
 export class InventoryService {
+    productService: ProductService = new ProductService();
+
+    private async convertToInventoryWithProduct(inventory: Inventory): Promise<InventoryWithProduct> {
+        const product: Product | null = await this.productService.getProductById(inventory.product_id);
+        const inventoryWithProduct: InventoryWithProduct = {
+            ...inventory,
+            product: product
+        }
+
+        return inventoryWithProduct;
+    }
+
+    private async convertToInventoryWithProductArray(inventory: Inventory[]): Promise<InventoryWithProduct[]> {
+        const convertedList: InventoryWithProduct[] = await Promise.all(
+            inventory.map(inv => this.convertToInventoryWithProduct(inv))
+        );
+
+        return convertedList;
+    }
+    
     /**
      * Fetch all inventory items
      */
-    async getAllInventory(): Promise<Inventory[]> {
+    async getAllInventory(): Promise<InventoryWithProduct[]> {
         // Cast to unknown then to Inventory[] to seamlessly align the Sequelize Model array with your Interface array
-        const inventory = await InventoryModel.findAll();
-        return inventory as unknown as Inventory[];
+        const inventory = await InventoryModel.findAll() as Inventory[];
+
+        return this.convertToInventoryWithProductArray(inventory);
     }
 
     /**
      * Fetch a specific inventory item by its primary key ID
      */
-    async getInventoryById(id: string | number): Promise<Inventory | null> {
+    async getInventoryById(id: string | number): Promise<InventoryWithProduct | null> {
         const inventoryItem = await InventoryModel.findByPk(id);
         if (!inventoryItem) return null;
-        return inventoryItem as unknown as Inventory;
+        return this.convertToInventoryWithProduct(inventoryItem);
     }
 
     /**
@@ -29,7 +53,7 @@ export class InventoryService {
         quantity?: string;
         expiry_date?: string;
         purchase_date?: string;
-    }): Promise<Inventory> {
+    }): Promise<InventoryWithProduct> {
         const newInventory = await InventoryModel.create({
             product_id: data.product_id,
             storage_location: data.storage_location,
@@ -40,7 +64,7 @@ export class InventoryService {
                 : null,
         });
 
-        return newInventory as unknown as Inventory;
+        return this.convertToInventoryWithProduct(newInventory);
     }
 
     /**
@@ -55,7 +79,7 @@ export class InventoryService {
             expiry_date?: string | null;
             purchase_date?: string | null;
         },
-    ): Promise<Inventory | null> {
+    ): Promise<InventoryWithProduct | null> {
         const inventoryItem = await InventoryModel.findByPk(id);
         if (!inventoryItem) return null;
 
@@ -78,7 +102,7 @@ export class InventoryService {
                     : inventoryItem.purchase_date,
         });
 
-        return inventoryItem as unknown as Inventory;
+        return this.convertToInventoryWithProduct(inventoryItem);
     }
 
     /**
