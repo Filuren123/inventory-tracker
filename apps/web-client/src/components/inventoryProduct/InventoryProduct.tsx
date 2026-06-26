@@ -1,14 +1,12 @@
 import "./InventoryProduct.css";
 import { useEffect, useState } from "react";
 
-import { getProducts } from "../../api/products";
 import { getAllInventory } from "../../api/inventory";
-import type { Product } from "../../model/product.interface";
-import type { InventoryWithProduct } from "../../model/inventoryWithProduct.interface";
+import type { RichInventory } from "../../model/richInventory";
 
 const InventoryProduct = () => {
 
-    const [inventory, setInventory] = useState<InventoryWithProduct[]>([]);
+    const [inventory, setInventory] = useState<RichInventory[]>([]);
 
     useEffect(() => {
         const fetchAllProducts = async () => {

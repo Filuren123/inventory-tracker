@@ -1,25 +1,33 @@
 import { InventoryModel } from '../db/model/inventory.db';
 import { Inventory } from '../model/inventory.interface';
 import { Product } from '../model/product.interface';
-import { InventoryWithProduct } from '../model/InventoryWithProduct.interface';
+import { RichInventory } from '../model/richInventory';
 import { ProductService } from './product.service';
+import { CategoryService } from './category.service';
+import { Category } from '../model/category.interface';
 
 export class InventoryService {
     productService: ProductService = new ProductService();
+    categoryService: CategoryService = new CategoryService();
 
-    private async convertToInventoryWithProduct(inventory: Inventory): Promise<InventoryWithProduct> {
+    private async convertToRichInventory(inventory: Inventory): Promise<RichInventory> {
         const product: Product | null = await this.productService.getProductById(inventory.product_id);
-        const inventoryWithProduct: InventoryWithProduct = {
+        let category: Category | null = null;
+        if (product != null && product.category_id != null){
+            category = await this.categoryService.getCategoryById(product.category_id);
+        }
+        const richInventory: RichInventory = {
             ...inventory,
-            product: product
+            product: product,
+            category: category
         }
 
-        return inventoryWithProduct;
+        return richInventory;
     }
 
-    private async convertToInventoryWithProductArray(inventory: Inventory[]): Promise<InventoryWithProduct[]> {
-        const convertedList: InventoryWithProduct[] = await Promise.all(
-            inventory.map(inv => this.convertToInventoryWithProduct(inv))
+    private async convertToRichInventoryArray(inventory: Inventory[]): Promise<RichInventory[]> {
+        const convertedList: RichInventory[] = await Promise.all(
+            inventory.map(inv => this.convertToRichInventory(inv))
         );
 
         return convertedList;
@@ -28,21 +36,21 @@ export class InventoryService {
     /**
      * Fetch all inventory items
      */
-    async getAllInventory(): Promise<InventoryWithProduct[]> {
+    async getAllInventory(): Promise<RichInventory[]> {
         const instances: InventoryModel[] = await InventoryModel.findAll();
         const inventory: Inventory[] = instances.map(item => item.get({ plain: true }));
 
-        return this.convertToInventoryWithProductArray(inventory);
+        return this.convertToRichInventoryArray(inventory);
     }
 
     /**
      * Fetch a specific inventory item by its primary key ID
      */
-    async getInventoryById(id: string | number): Promise<InventoryWithProduct | null> {
+    async getInventoryById(id: string | number): Promise<RichInventory | null> {
         const instance: InventoryModel | null = await InventoryModel.findByPk(id);
         if (!instance) return null;
         const inventoryItem: Inventory = instance.get({ plain: true });
-        return this.convertToInventoryWithProduct(inventoryItem);
+        return this.convertToRichInventory(inventoryItem);
     }
 
     /**
@@ -54,7 +62,7 @@ export class InventoryService {
         quantity?: string;
         expiry_date?: string;
         purchase_date?: string;
-    }): Promise<InventoryWithProduct> {
+    }): Promise<RichInventory> {
         const newInventory: InventoryModel = await InventoryModel.create({
             product_id: data.product_id,
             storage_location: data.storage_location,
@@ -66,7 +74,7 @@ export class InventoryService {
         });
 
         const newInventoryObj: Inventory = newInventory.get({ plain: true });
-        return this.convertToInventoryWithProduct(newInventory);
+        return this.convertToRichInventory(newInventory);
     }
 
     /**
@@ -81,7 +89,7 @@ export class InventoryService {
             expiry_date?: string | null;
             purchase_date?: string | null;
         },
-    ): Promise<InventoryWithProduct | null> {
+    ): Promise<RichInventory | null> {
         const inventoryItem: InventoryModel | null = await InventoryModel.findByPk(id);
         if (!inventoryItem) return null;
 
@@ -105,7 +113,7 @@ export class InventoryService {
         });
 
         const inventoryItemObj: Inventory = inventoryItem.get({ plain: true });
-        return this.convertToInventoryWithProduct(inventoryItem);
+        return this.convertToRichInventory(inventoryItem);
     }
 
     /**

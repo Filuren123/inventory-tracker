@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { InventoryService } from '../service/inventory.service';
 import { Inventory } from '../model/inventory.interface';
-import { InventoryWithProduct } from '../model/InventoryWithProduct.interface';
+import { RichInventory } from '../model/richInventory';
 
 export const inventoryRouter = express.Router();
 const inventoryService = new InventoryService();
@@ -11,7 +11,7 @@ const inventoryService = new InventoryService();
  */
 inventoryRouter.get(
     '/',
-    async (req: Request<{}, {}, {}>, res: Response<InventoryWithProduct[]>) => {
+    async (req: Request<{}, {}, {}>, res: Response<RichInventory[]>) => {
         try {
             const inventory = await inventoryService.getAllInventory();
             res.status(200).json(inventory);
@@ -26,7 +26,7 @@ inventoryRouter.get(
  */
 inventoryRouter.get(
     '/:id',
-    async (req: Request<{ id: string }, {}, {}>, res: Response<InventoryWithProduct>) => {
+    async (req: Request<{ id: string }, {}, {}>, res: Response<RichInventory>) => {
         try {
             const inventoryItem = await inventoryService.getInventoryById(
                 req.params.id,
@@ -59,7 +59,7 @@ inventoryRouter.post(
                 purchase_date?: string;
             }
         >,
-        res: Response<InventoryWithProduct | { message: string }>,
+        res: Response<RichInventory | { message: string }>,
     ) => {
         try {
             const {
@@ -114,7 +114,7 @@ inventoryRouter.put(
                 purchase_date?: string | null;
             }
         >,
-        res: Response<InventoryWithProduct | { message: string }>,
+        res: Response<RichInventory | { message: string }>,
     ) => {
         try {
             const {
