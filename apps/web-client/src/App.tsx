@@ -1,5 +1,5 @@
 import './App.css'
-import InventoryProduct from './components/inventoryProduct/InventoryProduct'
+import InventoryProduct from './components/inventory/inventoryItem/InventoryItem'
 
 function App() {
   return (

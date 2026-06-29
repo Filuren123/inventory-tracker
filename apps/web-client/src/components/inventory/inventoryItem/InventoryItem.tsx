@@ -1,10 +1,10 @@
-import "./InventoryProduct.css";
+import "./InventoryItem.css";
 import { useEffect, useState } from "react";
 
-import { getAllInventory } from "../../api/inventory";
-import type { RichInventory } from "../../model/richInventory";
+import { getAllInventory } from "../../../api/inventory";
+import type { RichInventory } from "../../../model/richInventory";
 
-const InventoryProduct = () => {
+const InventoryItem = () => {
 
     const [inventory, setInventory] = useState<RichInventory[]>([]);
 
@@ -50,4 +50,4 @@ const InventoryProduct = () => {
     )
 }
 
-export default InventoryProduct;
+export default InventoryItem;
