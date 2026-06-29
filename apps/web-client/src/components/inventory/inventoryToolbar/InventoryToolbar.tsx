@@ -1,5 +1,5 @@
 const InventoryToolbar = (
-    { searchTerm, onSearchChange, filters, onFilterChange, sort, onSortChange }: Props) => {
+    { searchTerm, onSearchChange, filters, onFilterChange, sort, onSortChange }: any ) => {
   return (
     <div className="toolbar">
       <input
@@ -19,3 +19,5 @@ const InventoryToolbar = (
     </div>
   );
 }
+
+export default InventoryToolbar;

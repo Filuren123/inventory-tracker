@@ -2,6 +2,9 @@ import "./InventoryPage.css";
 import { useEffect, useState } from "react";
 import type { RichInventory } from "../../../model/richInventory";
 
+import InventoryToolbar from "../inventoryToolbar/InventoryToolbar";
+import InventoryList from "../inventoryList/InventoryList";
+
 import { getAllInventory } from "../../../api/inventory";
 import { useInventoryFilters } from "../useInventoryFilters";
 

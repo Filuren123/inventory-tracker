@@ -1,21 +1,19 @@
 import './App.css'
-import InventoryProduct from './components/inventory/inventoryItem/InventoryItem'
+import InventoryPage from './components/inventory/inventoryPage/InventoryPage';
 
 function App() {
-  return (
-    <>
-      <main>
-        <aside>
-          
-        </aside>
-        <section>
-          <InventoryProduct />
-          <InventoryProduct />
-          <InventoryProduct />
-        </section>
-      </main>
-    </>
-  )
+	return (
+		<>
+			<main>
+				<aside>
+					
+				</aside>
+				<section>
+					<InventoryPage />
+				</section>
+			</main>
+		</>
+	)
 }
 
 export default App

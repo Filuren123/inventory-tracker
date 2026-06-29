@@ -28,9 +28,9 @@ export const useInventoryFilters = (items: RichInventory[]) => {
         if (searchTerm) {
             const term = searchTerm.toLowerCase();
             result = result.filter(item =>
-            item.product.name.toLowerCase().includes(term) ||
-            item.product.brand?.toLowerCase().includes(term) ||
-            item.product.ean_code?.includes(term)
+            item.product?.name.toLowerCase().includes(term) ||
+            item.product?.brand?.toLowerCase().includes(term) ||
+            item.product?.ean_code?.includes(term)
             );
         }
 
