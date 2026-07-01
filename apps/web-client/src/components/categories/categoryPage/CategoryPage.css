@@ -1,0 +1,290 @@
+.cat-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.5rem 0.75rem;
+  gap: 0.25rem;
+}
+
+.cat-title {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #4a5e2a;
+  margin: 0 0 1rem 0.75rem;
+}
+
+.cat-list,
+.cat-children {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.cat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.cat-row {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 8px;
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
+  padding-right: 0.5rem;
+  transition: background 0.15s ease;
+  position: relative;
+}
+
+.cat-row:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.cat-row--selected {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.cat-arrow {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: #4a5e2a;
+  border-radius: 4px;
+  transition: background 0.1s ease;
+}
+
+.cat-arrow:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.cat-arrow-icon {
+  display: inline-block;
+  font-size: 2rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+  transform: rotate(0deg);
+}
+
+.cat-arrow-icon--open {
+  transform: rotate(90deg);
+}
+
+.cat-label {
+  flex: 1;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  padding: 0.35rem 0.25rem;
+  font-size: 1.2em;
+  color: #2c3a18;
+  border-radius: 4px;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cat-row--selected .cat-label {
+  font-weight: 600;
+  color: #1a2410;
+}
+
+.cat-indicator {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4a5e2a;
+  flex-shrink: 0;
+}
+
+.cat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 1rem 0.75rem;
+}
+
+.cat-title {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #4a5e2a;
+  margin: 0;
+}
+
+.cat-edit-toggle {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  border: 1.5px solid #4a5e2a;
+  background: transparent;
+  color: #4a5e2a;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: background 0.15s, color 0.15s;
+}
+
+.cat-edit-toggle:hover,
+.cat-edit-toggle--active {
+  background: #4a5e2a;
+  color: #fff;
+}
+
+.cat-edit-actions {
+  display: flex;
+  gap: 0.2rem;
+  margin-left: auto;
+}
+
+.cat-edit-btn {
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.1s, color 0.1s;
+}
+
+.cat-edit-btn--add {
+  background: rgba(74, 94, 42, 0.12);
+  color: #4a5e2a;
+}
+
+.cat-edit-btn--add:hover,
+.cat-edit-btn--add.cat-edit-btn--active {
+  background: #4a5e2a;
+  color: #fff;
+}
+
+.cat-edit-btn--remove {
+  background: rgba(180, 60, 60, 0.1);
+  color: #b43c3c;
+}
+
+.cat-edit-btn--remove:hover,
+.cat-edit-btn--remove.cat-edit-btn--active {
+  background: #b43c3c;
+  color: #fff;
+}
+
+.cat-add-root {
+  margin: 0 0.5rem 0.75rem;
+}
+
+.cat-add-root-btn {
+  width: 100%;
+  padding: 0.35rem 0.75rem;
+  border-radius: 7px;
+  border: 1.5px dashed rgba(74, 94, 42, 0.4);
+  background: transparent;
+  color: #4a5e2a;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.cat-add-root-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: #4a5e2a;
+}
+
+.cat-add-form {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-right: 0.5rem;
+}
+
+.cat-add-form--root {
+  padding-left: 0.75rem;
+}
+
+.cat-add-input {
+  flex: 1;
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  border: 1.5px solid rgba(74, 94, 42, 0.5);
+  background: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  color: #2c3a18;
+  outline: none;
+  min-width: 0;
+}
+
+.cat-add-input:focus {
+  border-color: #4a5e2a;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.cat-remove-confirm {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.5rem 0.25rem 0;
+}
+
+.cat-remove-warning {
+  font-size: 0.75rem;
+  color: #b43c3c;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 8rem;
+}
+
+.cat-confirm-btn {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.1s;
+}
+
+.cat-confirm-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cat-confirm-btn--add {
+  background: #4a5e2a;
+  color: #fff;
+}
+
+.cat-confirm-btn--remove {
+  background: #b43c3c;
+  color: #fff;
+}
+
+.cat-confirm-btn--cancel {
+  background: rgba(0, 0, 0, 0.1);
+  color: #2c3a18;
+}

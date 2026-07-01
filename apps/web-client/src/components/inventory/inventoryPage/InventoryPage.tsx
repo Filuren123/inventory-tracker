@@ -16,26 +16,21 @@ const InventoryPage = () => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
-    useEffect(() => {
-        const fetchAllProducts = async () => {
-            try {
-                const data = await getAllInventory();
-                setInventory(data);
-            } catch (err: any) {
-                console.error("Could not fetch products", err);
-            }
-        };
-        fetchAllProducts();
+    const fetchAll = async () => {
+      try {
+        const [inventoryData, categoryData] = await Promise.all([
+            getAllInventory(),
+            getAllCategories(),
+          ]);
+          setInventory(inventoryData);
+          setCategories(categoryData);
+        } catch (err: any) {
+          console.error("Could not fetch data", err);
+        }
+    };
 
-        const fetchCategories = async () => {
-            try {
-              const data = await getAllCategories();
-              setCategories(data);
-            } catch (err: any) {
-                console.error("Could not fetch categories", err);
-            }
-          };
-          fetchCategories();
+    useEffect(() => {
+        fetchAll();
     }, []);
 
 
@@ -79,6 +74,7 @@ const InventoryPage = () => {
             categories={categories}
             selectedCategoryId={selectedCategoryId}
             onCategorySelect={setSelectedCategoryId}
+            onRefresh={fetchAll}
           />
 				</aside>
 				<section>
