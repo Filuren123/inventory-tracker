@@ -22,7 +22,7 @@ const InventoryItem = ({item}: Props) => {
             </div>
             <div className="firstsec">
                 <h1>{item.product.name}</h1>
-                <div className="category">{item.product.category_id}</div>
+                <div className="category">{item.category?.name || "N/A"}</div>
             </div>
             <div className="secsec">
                 <div className="bestbefore">
