@@ -1,8 +1,11 @@
+import "./InventoryToolbar.css";
+
 const InventoryToolbar = (
     { searchTerm, onSearchChange, filters, onFilterChange, sort, onSortChange }: any ) => {
   return (
     <div className="toolbar">
       <input
+        type="text"
         value={searchTerm}
         onChange={e => onSearchChange(e.target.value)}
         placeholder="Search by name, brand, EAN..."
