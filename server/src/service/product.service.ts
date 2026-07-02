@@ -19,6 +19,12 @@ export class ProductService {
         return productItem as unknown as Product;
     }
 
+    async getProductByEAN(ean: string): Promise<Product | null> {
+        const productItem = await ProductModel.findOne({ where: { ean_code: ean } });
+        if (!productItem) return null;
+        return productItem as unknown as Product;
+    }
+
     /**
      * Create a brand new product entry
      */

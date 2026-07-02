@@ -42,6 +42,22 @@ productRouter.get(
 );
 
 /**
+ * Get a specific product by EAN code
+ */
+productRouter.get(
+    '/ean/:ean',
+    async (req: Request<{ ean: string }, {}, {}>, res: Response<Product | null>) => {
+        try {
+            const productItem = await productService.getProductByEAN(
+                req.params.ean,
+            );
+        } catch (error: any) {
+            res.status(500).send(error.message);
+        }
+    },
+);
+
+/**
  * Create a new product item
  */
 productRouter.post(
