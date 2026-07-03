@@ -1,7 +1,20 @@
+import InventoryAddRem from "../inventoryAddRem/InventoryAddRem";
 import "./InventoryToolbar.css";
+import { useNavigate } from "react-router-dom";
 
 const InventoryToolbar = (
     { searchTerm, onSearchChange, filters, onFilterChange, sort, onSortChange }: any ) => {
+
+    const navigate = useNavigate();
+
+    const handleRouteToAddItem = () => {
+        navigate("/addItem");
+    };
+
+    const handleRouteToRemItem = () => {
+      navigate("/remItem");
+    }
+      
   return (
     <div className="toolbar">
       <input
@@ -19,6 +32,8 @@ const InventoryToolbar = (
         <option value="expiry_date">Expiry date</option>
         <option value="quantity">Quantity</option>
       </select>
+      <button onClick={handleRouteToAddItem} type="button">Add Item</button>
+      <button onClick={handleRouteToRemItem} type="button">Remove Item</button>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import {
 
 import InventoryPage from './components/inventory/inventoryPage/InventoryPage';
 import InventoryAddRem from './components/inventory/inventoryAddRem/InventoryAddRem';
+import InventoryRem from './components/inventory/inventoryAddRem/inventoryRem/InventoryRem';
 
 function App() {
 	return (
@@ -21,6 +22,10 @@ function App() {
 					<Route
 						path="addItem"
 						element={<InventoryAddRem />}
+					/>
+					<Route
+						path="remItem"
+						element={<InventoryRem />}
 					/>
 				</Routes>
 			</Router>
