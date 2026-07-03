@@ -7,6 +7,7 @@ import { userRouter } from './router/user.router';
 import { inventoryRouter } from './router/inventory.router';
 import { productRouter } from './router/product.router';
 import { categoryRouter } from './router/category.router';
+import { authenticateToken } from './middlewares/auth.middleware';
 
 dotenv.config();
 
@@ -23,6 +24,8 @@ app.use((req, res, next) => {
 });
 
 app.use('/user', userRouter);
+
+app.use(authenticateToken); // Apply authentication middleware to all routes below
 app.use('/inventory', inventoryRouter);
 app.use('/product', productRouter);
 app.use('/categories', categoryRouter);
