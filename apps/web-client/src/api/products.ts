@@ -1,11 +1,9 @@
-import axios from "axios";
+import axios from "./axios";
 import type { Product } from "../model/product.interface";
-
-const baseURL: string = import.meta.env.VITE_API_URL;
 
 export async function getProducts(): Promise<Product[]> {
     try {
-        const res = await axios.get(`${baseURL}/product`, {});
+        const res = await axios.get(`/product`, {});
         return res.data;
     } catch (err: any) {
         throw new Error(err.response.data);
@@ -14,7 +12,7 @@ export async function getProducts(): Promise<Product[]> {
 
 export async function getProductByEAN(ean: string): Promise<Product | null> {
     try {
-        const res = await axios.get(`${baseURL}/product/ean/${ean}`);
+        const res = await axios.get(`/product/ean/${ean}`);
         return res.data;
     } catch (err: any) {
         if (err.response?.status === 404) {
@@ -38,7 +36,7 @@ export async function addProduct(
     link: string | null,
 ): Promise<Product> {
     try {
-        const res = await axios.post(`${baseURL}/product/add`, {
+        const res = await axios.post(`/product/add`, {
             ean_code,
             name,
             brand,
@@ -75,7 +73,7 @@ export async function updateProduct(
     link?: string | null,
 ): Promise<Product> {
     try {
-        const res = await axios.put(`${baseURL}/product/item/${id}`, {
+        const res = await axios.put(`/product/item/${id}`, {
             ean_code,
             name,
             brand,
@@ -99,7 +97,7 @@ export async function updateProduct(
 
 export async function deleteProduct(id: string): Promise<{ message: string }> {
     try {
-        const res = await axios.delete(`${baseURL}/product/${id}`);
+        const res = await axios.delete(`/product/${id}`);
         return res.data;
     } catch (e: any) {
         if (e.response) {

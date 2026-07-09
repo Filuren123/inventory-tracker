@@ -29,4 +29,6 @@ apps/*/package-lock.json
 
 # Server
 .env
+.env.development
+.env.production
 package-lock.json

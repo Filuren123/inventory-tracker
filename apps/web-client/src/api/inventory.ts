@@ -1,11 +1,9 @@
-import axios from "axios";
+import axios from "./axios";
 import type { RichInventory } from "../model/richInventory";
-
-const baseURL: string = import.meta.env.VITE_API_URL;
 
 export async function getAllInventory(): Promise<RichInventory[]> {
     try {
-        const res = await axios.get(`${baseURL}/inventory`, {});
+        const res = await axios.get(`/inventory`, {});
         return res.data;
     } catch (err: any) {
         throw new Error(err.response.data);
@@ -14,7 +12,7 @@ export async function getAllInventory(): Promise<RichInventory[]> {
 
 export async function getInventoryById(id: string): Promise<RichInventory> {
     try {
-        const res = await axios.get(`${baseURL}/inventory/${id}`);
+        const res = await axios.get(`/inventory/${id}`);
         return res.data;
     } catch (e: any) {
         if (e.response) {
@@ -32,7 +30,7 @@ export async function addInventory(
     purchase_date?: string,
 ): Promise<RichInventory> {
     try {
-        const res = await axios.post(`${baseURL}/inventory/add`, {
+        const res = await axios.post(`/inventory/add`, {
             product_id,
             storage_location,
             quantity,
@@ -57,7 +55,7 @@ export async function updateInventory(
     purchase_date?: string | null,
 ): Promise<RichInventory> {
     try {
-        const res = await axios.put(`${baseURL}/inventory/item/${id}`, {
+        const res = await axios.put(`/inventory/item/${id}`, {
             product_id,
             storage_location,
             quantity,
@@ -75,7 +73,7 @@ export async function updateInventory(
 
 export async function deleteInventory(id: string): Promise<{ message: string }> {
     try {
-        const res = await axios.delete(`${baseURL}/inventory/${id}`);
+        const res = await axios.delete(`/inventory/${id}`);
         return res.data;
     } catch (e: any) {
         if (e.response) {

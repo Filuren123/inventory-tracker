@@ -4,7 +4,6 @@ import { User } from '../model/user.interface';
 import { authenticateToken } from '../middlewares/auth.middleware';
 
 const userService = new UserService();
-
 const jwt = require('jsonwebtoken');
 
 export const userRouter = express.Router();
@@ -27,15 +26,34 @@ userRouter.post(
     '/login',
     async (
         req: Request<{}, {}, { username: string; password: string }>,
-        res: Response<{ accessToken: string }>,
+        res: Response,
     ) => {
         try {
-            // TODO: Authenticate user
+            // TODO: AUTH USER
 
             const username = req.body.username;
-            const user = { username: username };
+            const user = { username };
             const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
-            res.json({ accessToken: accessToken });
-        } catch (error: any) {}
+
+            res.cookie('accessToken', accessToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                maxAge: 1000 * 60 * 60 * 24 * 14, // 14 days
+            });
+
+            res.json({ success: true });
+        } catch (error: any) {
+            res.status(401).json({ message: 'Login failed' });
+        }
     },
 );
+
+userRouter.post('/logout', (_req, res) => {
+    res.clearCookie('accessToken');
+    res.json({ success: true });
+});
+
+userRouter.get('/me', authenticateToken, (req: Request, res: Response) => {
+    res.json({ user: (req as any).user });
+});
