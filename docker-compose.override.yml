@@ -1,0 +1,32 @@
+services:
+  app:
+    profiles: ["prod-only"]
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    env_file: ./server/.env
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    command: npm run dev
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "4000:4000"
+
+  client:
+    build:
+      context: ./apps/web-client
+      dockerfile: Dockerfile.dev
+    env_file: ./apps/web-client/.env
+    volumes:
+      - ./apps/web-client:/app
+      - /app/node_modules
+    command: npm run dev -- --host
+    ports:
+      - "5173:5173"
+    depends_on:
+      - server

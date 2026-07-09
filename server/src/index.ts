@@ -3,7 +3,7 @@ import { app } from './start';
 import { User } from './model/user.interface';
 import { UserService } from './service/user.service';
 
-const PORT: number = Number(process.env.PORT ?? 8080);
+const PORT: number = Number(process.env.PORT ?? 4000);
 
 const userService = new UserService();
 
