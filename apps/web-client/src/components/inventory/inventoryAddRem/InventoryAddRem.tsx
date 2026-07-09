@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import './InventoryAddRem.css';
+import type { Category } from '../../../model/category.interface';
 import { getProductByEAN, addProduct, updateProduct } from '../../../api/products';
 import type { Product } from '../../../model/product.interface';
 import { addInventory } from '../../../api/inventory';
@@ -117,12 +118,6 @@ interface ToastState {
   message: string;
   type: ToastType;
   visible: boolean;
-}
-
-// Category local definition matching API shape (assuming common id/name convention)
-interface Category {
-  category_id: number;
-  name: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -420,7 +415,7 @@ const InventoryAddRem = () => {
                 >
                   <option value="">Select Category</option>
                   {categories.map((cat) => (
-                    <option key={cat.category_id} value={cat.category_id}>
+                    <option key={cat.id} value={cat.id}>
                       {cat.name}
                     </option>
                   ))}

@@ -1,7 +1,9 @@
 /* ── Layout ── */
 .ap-page {
+  position: fixed;
+  inset: 0;
   display: flex;
-  height: 100%;
+  flex-direction: row;   /* ← explicit */
   background: #eef1e8;
   overflow: hidden;
 }
@@ -15,7 +17,8 @@
 }
 
 .ap-divider {
-  width: 1px;
+  width: 1px !important;
+  align-self: stretch;
   background: #d4dcbf;
   flex-shrink: 0;
   margin: 2rem 0;
