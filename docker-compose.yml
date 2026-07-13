@@ -3,7 +3,7 @@ services:
     image: postgres:18
     env_file: ./server/.env
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\""]
       interval: 5s
