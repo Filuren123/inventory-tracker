@@ -1,13 +1,11 @@
-# docker-compose.yml
 services:
   db:
-    image: postgres:16
+    image: postgres:18
     env_file: ./server/.env
     volumes:
       - pgdata:/var/lib/postgresql/data
-    # no ports exposed publicly — only reachable inside docker network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\""]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -17,12 +15,9 @@ services:
       context: .
       dockerfile: Dockerfile
     env_file: ./server/.env
-    environment:
-      PORT: 8080
     depends_on:
       db:
         condition: service_healthy
-    # no "ports:" here either — caddy talks to it internally
 
   caddy:
     image: caddy:2-alpine
