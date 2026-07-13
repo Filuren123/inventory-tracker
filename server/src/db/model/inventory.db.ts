@@ -5,8 +5,8 @@ import {
     type CreationOptional,
     DataTypes,
 } from 'sequelize';
-import { sequelize } from '../conn.ts';
-import { ProductModel } from './product.db.ts';
+import { sequelize } from '../conn.js';
+import { ProductModel } from './product.db.js';
 
 export class InventoryModel extends Model<
     InferAttributes<InventoryModel>,

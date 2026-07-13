@@ -1,5 +1,5 @@
-import { ProductModel } from '../db/model/product.db.ts';
-import type { Product } from '../model/product.interface.ts';
+import { ProductModel } from '../db/model/product.db.js';
+import type { Product } from '../model/product.interface.js';
 
 export class ProductService {
     /**

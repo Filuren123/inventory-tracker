@@ -5,7 +5,7 @@ import {
     type CreationOptional,
     DataTypes,
 } from 'sequelize';
-import { sequelize } from '../conn.ts';
+import { sequelize } from '../conn.js';
 
 export class UserModel extends Model<
     InferAttributes<UserModel>,

@@ -5,9 +5,9 @@ import {
     type CreationOptional,
     DataTypes,
 } from 'sequelize';
-import { sequelize } from '../conn.ts';
-import { UserModel } from './user.db.ts';
-import { ProductModel } from './product.db.ts';
+import { sequelize } from '../conn.js';
+import { UserModel } from './user.db.js';
+import { ProductModel } from './product.db.js';
 
 export class TransactionModel extends Model<
     InferAttributes<TransactionModel>,

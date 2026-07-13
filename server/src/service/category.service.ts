@@ -1,5 +1,5 @@
-import { CategoryModel } from '../db/model/category.db.ts';
-import type { Category } from '../model/category.interface.ts';
+import { CategoryModel } from '../db/model/category.db.js';
+import type { Category } from '../model/category.interface.js';
 
 export class CategoryService {
     /**

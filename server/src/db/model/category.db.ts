@@ -5,7 +5,7 @@ import {
     type InferCreationAttributes,
     type CreationOptional,
 } from 'sequelize';
-import { sequelize } from '../conn.ts';
+import { sequelize } from '../conn.js';
 
 export class CategoryModel extends Model<
     InferAttributes<CategoryModel>,

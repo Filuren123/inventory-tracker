@@ -1,6 +1,6 @@
 import express, { type Request, type Response } from 'express';
-import { CategoryService } from '../service/category.service.ts';
-import type { Category } from '../model/category.interface.ts';
+import { CategoryService } from '../service/category.service.js';
+import type { Category } from '../model/category.interface.js';
 
 export const categoryRouter = express.Router();
 const categoryService = new CategoryService();

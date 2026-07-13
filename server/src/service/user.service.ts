@@ -1,5 +1,5 @@
-import { UserModel } from '../db/model/user.db.ts';
-import type { User } from '../model/user.interface.ts';
+import { UserModel } from '../db/model/user.db.js';
+import type { User } from '../model/user.interface.js';
 
 export class UserService {
     async getUserByUsername(username: string): Promise<User> {

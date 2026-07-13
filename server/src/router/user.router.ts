@@ -1,7 +1,7 @@
 import express, { type Request, type Response } from 'express';
-import { UserService } from '../service/user.service.ts';
-import type { User } from '../model/user.interface.ts';
-import { authenticateToken } from '../middlewares/auth.middleware.ts';
+import { UserService } from '../service/user.service.js';
+import type { User } from '../model/user.interface.js';
+import { authenticateToken } from '../middlewares/auth.middleware.js';
 import jwt from 'jsonwebtoken';
 
 const userService = new UserService();

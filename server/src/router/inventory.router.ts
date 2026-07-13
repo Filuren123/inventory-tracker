@@ -1,7 +1,7 @@
 import express, { type Request, type Response } from 'express';
-import { InventoryService } from '../service/inventory.service.ts';
-import type { Inventory } from '../model/inventory.interface.ts';
-import type { RichInventory } from '../model/richInventory.ts';
+import { InventoryService } from '../service/inventory.service.js';
+import type { Inventory } from '../model/inventory.interface.js';
+import type { RichInventory } from '../model/richInventory.js';
 
 export const inventoryRouter = express.Router();
 const inventoryService = new InventoryService();
