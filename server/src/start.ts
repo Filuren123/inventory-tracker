@@ -45,6 +45,6 @@ app.use('/inventory', authenticateToken, inventoryRouter);
 app.use('/product', authenticateToken, productRouter);
 app.use('/categories', authenticateToken, categoryRouter);
 
-app.get('*', (req, res) => {
+app.use((req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'index.html'));
 });
