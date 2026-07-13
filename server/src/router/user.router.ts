@@ -1,10 +1,10 @@
-import express, { Request, Response } from 'express';
-import { UserService } from '../service/user.service';
-import { User } from '../model/user.interface';
-import { authenticateToken } from '../middlewares/auth.middleware';
+import express, { type Request, type Response } from 'express';
+import { UserService } from '../service/user.service.ts';
+import type { User } from '../model/user.interface.ts';
+import { authenticateToken } from '../middlewares/auth.middleware.ts';
+import jwt from 'jsonwebtoken';
 
 const userService = new UserService();
-const jwt = require('jsonwebtoken');
 
 export const userRouter = express.Router();
 
@@ -33,7 +33,7 @@ userRouter.post(
 
             const username = req.body.username;
             const user = { username };
-            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET!);
 
             res.cookie('accessToken', accessToken, {
                 httpOnly: true,

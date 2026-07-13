@@ -1,6 +1,6 @@
-import express, { Request, Response } from 'express';
-import { ProductService } from '../service/product.service';
-import { Product } from '../model/product.interface';
+import express, { type Request, type Response } from 'express';
+import { ProductService } from '../service/product.service.ts';
+import { type Product } from '../model/product.interface.ts';
 
 export const productRouter = express.Router();
 const productService = new ProductService();

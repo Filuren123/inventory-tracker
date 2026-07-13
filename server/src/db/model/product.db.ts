@@ -1,12 +1,12 @@
 import {
     Model,
-    InferAttributes,
-    InferCreationAttributes,
-    CreationOptional,
+    type InferAttributes,
+    type InferCreationAttributes,
+    type CreationOptional,
     DataTypes,
 } from 'sequelize';
-import { sequelize } from '../conn';
-import { CategoryModel } from './category.db';
+import { sequelize } from '../conn.ts';
+import { CategoryModel } from './category.db.ts';
 
 export class ProductModel extends Model<
     InferAttributes<ProductModel>,

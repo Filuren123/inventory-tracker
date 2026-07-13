@@ -1,10 +1,10 @@
-import { InventoryModel } from '../db/model/inventory.db';
-import { Inventory } from '../model/inventory.interface';
-import { Product } from '../model/product.interface';
-import { RichInventory } from '../model/richInventory';
-import { ProductService } from './product.service';
-import { CategoryService } from './category.service';
-import { Category } from '../model/category.interface';
+import { InventoryModel } from '../db/model/inventory.db.ts';
+import type { Inventory } from '../model/inventory.interface.ts';
+import type { Product } from '../model/product.interface.ts';
+import type { RichInventory } from '../model/richInventory.ts';
+import { ProductService } from './product.service.ts';
+import { CategoryService } from './category.service.ts';
+import type { Category } from '../model/category.interface.ts';
 
 export class InventoryService {
     productService: ProductService = new ProductService();

@@ -4,11 +4,11 @@ import dotenvFlow from 'dotenv-flow';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
-import { userRouter } from './router/user.router';
-import { inventoryRouter } from './router/inventory.router';
-import { productRouter } from './router/product.router';
-import { categoryRouter } from './router/category.router';
-import { authenticateToken } from './middlewares/auth.middleware';
+import { userRouter } from './router/user.router.ts';
+import { inventoryRouter } from './router/inventory.router.ts';
+import { productRouter } from './router/product.router.ts';
+import { categoryRouter } from './router/category.router.ts';
+import { authenticateToken } from './middlewares/auth.middleware.ts';
 
 dotenvFlow.config();
 

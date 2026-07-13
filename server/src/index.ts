@@ -1,7 +1,6 @@
-import { sequelize } from './db/conn';
-import { app } from './start';
-import { User } from './model/user.interface';
-import { UserService } from './service/user.service';
+import { sequelize } from './db/conn.ts';
+import { app } from './start.ts';
+import { UserService } from './service/user.service.ts';
 
 const PORT: number = Number(process.env.PORT ?? 4000);
 
