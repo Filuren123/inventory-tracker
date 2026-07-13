@@ -1,10 +1,12 @@
 main {
 	display: flex;
 	min-height: 100vh;
+
+	background: var(--bg);
 }
 
 aside {
-	min-width: 30%;
+	max-width: 25%;
 	background: var(--primary);
 	padding: 1rem;
 }

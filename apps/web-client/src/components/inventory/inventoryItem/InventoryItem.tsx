@@ -16,22 +16,42 @@ const InventoryItem = ({item}: Props) => {
 
     return (
         <article>
-            <div className="heading">
-                <h2>{item.product.brand}</h2>
-                <div className="ean">EAN: {item.product.ean_code}</div>
-            </div>
-            <div className="firstsec">
-                <h1>{item.product.name}</h1>
-                <div className="category">{item.category?.name || "N/A"}</div>
-            </div>
-            <div className="secsec">
-                <div className="bestbefore">
-                    Best before: {item.expiry_date?.toString() || "N/A"}
+            <div className="product-properties">
+                <div>
+                    <img src="/icons/shopping-bag.svg" alt="Product brand" />
+                    <div>{item.product.brand}</div>
                 </div>
                 <div>
-                    <button type="button" className="btn btn-primary">Se product</button>
-                    <button type="button" className="btn btn-danger">Remove</button>
+                    <img src="/icons/danger-symbol.svg" alt="Expiration date" />
+                    <div>{item.expiry_date?.toString() || "N/A"}</div>
                 </div>
+                <div>
+                    <img src="/icons/box.svg" alt="Storage location" />
+                    <div>{item.storage_location}</div>
+                </div>
+                <div>
+                    <img src="/icons/scale.svg" alt="Ammout" />
+                    <div>{item.product.package_size || "N/A"}</div>
+                </div>
+                <div>
+                    <img src="/icons/barcode.svg" alt="EAN code" />
+                    <div>{item.product.ean_code}</div>
+                </div>
+            </div>
+            <div className="middle">
+                <div className="product-name">
+                    {item.product.name}
+                </div>
+                <div className="category">
+                    <div>{item.category?.name || "No cateogory"}</div>
+                </div>
+                <div className="tags">
+
+                </div>
+            </div>
+            <div>
+                <button>See product</button>
+                <button>Remove product</button>
             </div>
         </article>
     )

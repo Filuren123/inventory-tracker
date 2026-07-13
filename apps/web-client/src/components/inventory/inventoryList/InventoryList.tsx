@@ -11,7 +11,7 @@ const InventoryList = ({items}: Props) => {
     
     return (
         <>
-            {items.map(item => <InventoryItem key={item.id} item={item} />)}
+            {items.map(item => <div className="inv-item"><InventoryItem key={item.id} item={item} /></div>)}
         </>
     )
 }
