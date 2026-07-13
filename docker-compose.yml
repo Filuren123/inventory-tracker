@@ -1,11 +1,11 @@
+# docker-compose.yml
 services:
   db:
     image: postgres:16
     env_file: ./server/.env
     volumes:
       - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+    # no ports exposed publicly — only reachable inside docker network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 5s
@@ -22,8 +22,21 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    # no "ports:" here either — caddy talks to it internally
+
+  caddy:
+    image: caddy:2-alpine
     ports:
-      - "8080:8080"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
 
 volumes:
   pgdata:
+  caddy_data:
+  caddy_config:

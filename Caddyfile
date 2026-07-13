@@ -1,0 +1,7 @@
+filiplundberg.se, www.filiplundberg.se {
+    reverse_proxy app:8080
+}
+
+/* api.yourdomain.com {
+    reverse_proxy app:8080
+} */
