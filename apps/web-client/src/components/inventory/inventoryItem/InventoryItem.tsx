@@ -15,7 +15,7 @@ const InventoryItem = ({item}: Props) => {
     }
 
     return (
-        <article>
+        <article className="product-item">
             <div className="product-properties">
                 <div>
                     <img src="/icons/shopping-bag.svg" alt="Product brand" />

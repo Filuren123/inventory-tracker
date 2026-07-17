@@ -1,4 +1,4 @@
-article {
+article.product-item {
     max-width: 100%;
     
     display: flex;
@@ -13,7 +13,7 @@ article {
     border-radius: var(--border-rad);
 }
 
-article > div {
+article.product-item > div {
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -52,7 +52,7 @@ article > div {
     margin-bottom: none;
 }
 
-button {
+.product-item button {
     width: 50%;
     margin-right: 0.5em;
 
@@ -64,7 +64,7 @@ button {
     background: #caffc3;
 }
 
-button:last-child {
+.product-item button:last-child {
     margin-right: 0;
     margin-left: 0.5em;
     background: #ffc8c3;

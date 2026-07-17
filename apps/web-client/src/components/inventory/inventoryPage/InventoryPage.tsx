@@ -68,7 +68,7 @@ const InventoryPage = () => {
 
   return (
     <>
-    <main>
+    <main className="category-main-page">
 				<aside>
 					<CategoryPage
             categories={categories}

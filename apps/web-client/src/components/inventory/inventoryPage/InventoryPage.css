@@ -1,17 +1,17 @@
-main {
+main.category-main-page {
 	display: flex;
 	min-height: 100vh;
 
 	background: var(--bg);
 }
 
-aside {
+.category-main-page aside {
 	max-width: 25%;
 	background: var(--primary);
 	padding: 1rem;
 }
 
-section {
+.category-main-page section {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
