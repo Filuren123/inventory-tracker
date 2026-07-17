@@ -56,7 +56,7 @@ export default function CategoryManager() {
         if (!newCategoryName.trim()) return;
 
         try {
-            await addCategory(newCategoryName, null);
+            await addCategory(newCategoryName);
             setNewCategoryName("");
             loadCategories();
         } catch (error) {
