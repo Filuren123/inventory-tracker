@@ -26,3 +26,12 @@ export async function removeCategory(categoryId: number): Promise<void> {
         throw new Error(err.response.data);
     }
 }
+
+export async function updateCategory(categoryId: number, name: string, parent_id?: number): Promise<Category> {
+    try {
+        const res = await axios.put(`/categories/item/${categoryId}`, {name, parent_id});
+        return res.data;
+    } catch (err: any) {
+        throw new Error(err.response.data);
+    }
+}

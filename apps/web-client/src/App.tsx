@@ -11,6 +11,7 @@ import InventoryAddRem from './components/inventory/inventoryAddRem/InventoryAdd
 import InventoryRem from './components/inventory/inventoryAddRem/inventoryRem/InventoryRem';
 import LoginPage from './components/user/login';
 import LogoutPage from './components/user/logout';
+import CategoryManager from './components/categories/categoryManager/CategoryManager';
 
 function App() {
 	return (
@@ -36,6 +37,10 @@ function App() {
 					<Route
 						path="logout"
 						element={<LogoutPage />}
+					/>
+					<Route
+						path="categorymanager"
+						element={<CategoryManager />}
 					/>
 				</Routes>
 			</Router>
