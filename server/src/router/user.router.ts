@@ -29,9 +29,17 @@ userRouter.post(
         res: Response,
     ) => {
         try {
-            // TODO: AUTH USER
-
             const username = req.body.username;
+            const password = req.body.password;
+
+            // Check user credentials against .env file
+            if (
+                username !== process.env.ADMIN_USERNAME ||
+                password !== process.env.ADMIN_PASSWORD
+            ) {
+                throw new Error('Invalid credentials');
+            }
+
             const user = { username };
             const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET!);
 
