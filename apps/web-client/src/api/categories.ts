@@ -10,6 +10,18 @@ export async function getAllCategories(): Promise<Category[]> {
     }
 }
 
+export async function getCategoryById(categoryId: number): Promise<Category | null> {
+    try {
+        const res = await axios.get(`/categories/${categoryId}`);
+        return res.data;
+    } catch (err: any) {
+        if (err.response?.status === 404) {
+            return null;
+        }
+        throw new Error(err.response?.data ?? 'Failed to look up category');
+    }
+}
+
 export async function addCategory(name: string, parent_id?: number): Promise<Category> {
     try {
         const res = await axios.post(`/categories/add`, {name, parent_id});
