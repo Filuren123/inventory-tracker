@@ -22,6 +22,18 @@ export async function getProductByEAN(ean: string): Promise<Product | null> {
     }
 }
 
+export async function getProductById(id: string): Promise<Product | null> {
+    try {
+        const res = await axios.get(`/product/${id}`);
+        return res.data;
+    } catch (err: any) {
+        if (err.response?.status === 404) {
+            return null;
+        }
+        throw new Error(err.response?.data ?? 'Failed to look up product');
+    }
+}
+
 export async function addProduct(
     ean_code: string | null,
     name: string,
