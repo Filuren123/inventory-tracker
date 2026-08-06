@@ -12,6 +12,7 @@ import InventoryRem from './components/inventory/inventoryAddRem/inventoryRem/In
 import LoginPage from './components/user/login';
 import LogoutPage from './components/user/logout';
 import CategoryManager from './components/categories/categoryManager/CategoryManager';
+import InventoryAdd from './components/inventory/inventoryAddRem/inventoryAdd/InventoryAdd';
 
 function App() {
 	return (
@@ -24,7 +25,7 @@ function App() {
 					/>
 					<Route
 						path="addItem"
-						element={<InventoryAddRem />}
+						element={<InventoryAdd />}
 					/>
 					<Route
 						path="remItem"

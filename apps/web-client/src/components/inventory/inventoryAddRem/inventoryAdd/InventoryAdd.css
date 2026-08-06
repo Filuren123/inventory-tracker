@@ -1,0 +1,84 @@
+main.inventory-add-main {
+    background: var(--bg);
+
+    display: flex;
+}
+
+.inventory-add-main-form {
+    padding: 2em;
+
+    flex: 1 1 50%;
+}
+
+aside.additem-active-product {
+    flex: 1 1 40%;
+    padding: 2em;
+}
+
+.additem-subheader {
+    font-size: 0.8em;
+    color: var(--bg-accent);
+    margin-bottom: 0;
+}
+
+.additem-header,
+.additem-active-product-header {
+    font-size: 2em;
+    margin-bottom: 1em;
+    font-weight: bold;
+}
+
+.additem-quantity-purchase-date input,
+.additem-storage-location input,
+.additem-ean-searchbar input,
+.additem-input-field {
+    width: 100%;
+    border: 1px solid var(--border-col);
+    border-radius: var(--border-rad);
+    padding: 0.5em;
+}
+
+.additem-ean-searchbar {
+    background: var(--light);
+    padding: 1.5em;
+    border: 1px solid #cdecff;
+    border-radius: var(--border-rad);
+    margin-bottom: 1.5em;
+}
+
+.additem-ean-searchbar input {
+    font-weight: 600;
+    font-size: 1.2em;
+}
+
+.item-details-separator {
+    border-bottom: 1px solid var(--border-col);
+    padding-bottom: 1em;
+    margin-bottom: 1.5em;
+    margin-top: 3em;
+    font-size: 0.9em;
+}
+
+.inventory-add-main-form label, .inventory-add-main-form-label {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    margin-bottom: 0.3em;
+}
+
+.additem-item-details > div {
+    margin-bottom: 1.3em;
+}
+
+.additem-quantity-purchase-date {
+    display: flex;
+    justify-content: space-between;
+    gap: 1em;
+}
+
+.additem-quantity-purchase-date > div {
+    width: 50%;
+}
