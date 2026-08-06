@@ -22,7 +22,7 @@ export async function getProductByEAN(ean: string): Promise<Product | null> {
     }
 }
 
-export async function getProductById(id: string): Promise<Product | null> {
+export async function getProductById(id: number): Promise<Product | null> {
     try {
         const res = await axios.get(`/product/${id}`);
         return res.data;
