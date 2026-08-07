@@ -19,7 +19,7 @@ const ProductDisplay = ({productId}: {productId: number | null}) => {
             const productFetch: Product | null = await getProductById(productId);
             setProduct(productFetch);
 
-            if (productFetch.category_id != null) {
+            if (productFetch?.category_id != null) {
                 const categoryFetch: Category | null = await getCategoryById(productFetch.category_id);
                 setProductCategory(categoryFetch);
             } else {
