@@ -10,12 +10,17 @@ const ProductDisplay = ({productId}: {productId: number | null}) => {
 
     // Get product data from API
     const fetchAll = async () => {
+        if (productId == null) {
+            setProduct({} as Product)
+            setProductCategory(null);
+            return;
+        }
         try {
-            const productFetch: Product = await getProductById(productId);
+            const productFetch: Product | null = await getProductById(productId);
             setProduct(productFetch);
 
             if (productFetch.category_id != null) {
-                const categoryFetch: Category = await getCategoryById(productFetch.category_id);
+                const categoryFetch: Category | null = await getCategoryById(productFetch.category_id);
                 setProductCategory(categoryFetch);
             } else {
                 setProductCategory(null);
