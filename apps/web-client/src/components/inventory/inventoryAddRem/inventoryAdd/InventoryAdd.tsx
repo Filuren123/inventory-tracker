@@ -21,7 +21,7 @@ const InventoryAdd = () => {
         const activeProduct = await getProductByEAN(value);
         if (activeProduct) {
             setActiveProductId(activeProduct.product_id);
-            setStorageLocation(activeProduct.default_storage_location);
+            setStorageLocation(activeProduct.default_storage_location ?? '');
             setEanCode(value);
         } else {
             setActiveProductId(null);
