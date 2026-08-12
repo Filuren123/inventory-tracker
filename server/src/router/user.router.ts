@@ -8,19 +8,9 @@ const userService = new UserService();
 
 export const userRouter = express.Router();
 
-userRouter.get(
-    '/:username',
-    async (req: Request<{ username: string }, {}, {}>, res: Response<User>) => {
-        try {
-            const user: User = await userService.getUserByUsername(
-                req.params.username,
-            );
-            res.status(200).send(user);
-        } catch (error: any) {
-            res.status(500).send(error.message);
-        }
-    },
-);
+userRouter.get('/me', authenticateToken, (req: Request, res: Response) => {
+    res.json({ user: (req as any).user });
+});
 
 userRouter.post(
     '/login',
@@ -62,6 +52,16 @@ userRouter.post('/logout', (_req, res) => {
     res.json({ success: true });
 });
 
-userRouter.get('/me', authenticateToken, (req: Request, res: Response) => {
-    res.json({ user: (req as any).user });
-});
+userRouter.get(
+    '/:username',
+    async (req: Request<{ username: string }, {}, {}>, res: Response<User>) => {
+        try {
+            const user: User = await userService.getUserByUsername(
+                req.params.username,
+            );
+            res.status(200).send(user);
+        } catch (error: any) {
+            res.status(500).send(error.message);
+        }
+    },
+);
