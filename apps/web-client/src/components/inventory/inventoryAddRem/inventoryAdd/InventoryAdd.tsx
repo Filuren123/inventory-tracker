@@ -5,6 +5,7 @@ import { todayISO } from "../../../../utils/dates";
 import { addInventory } from "../../../../api/inventory";
 import ProductDisplay from "../../../product/productDisplay/ProductDisplay";
 import { getProductByEAN } from "../../../../api/products";
+import type { Product } from "../../../../model/product.interface";
 
 const InventoryAdd = () => {
     const [eanCode, setEanCode] = useState('');
@@ -13,18 +14,25 @@ const InventoryAdd = () => {
     const [quantity, setQuantity] = useState('');
     const [expiryDate, setExpiryDate] = useState('');
     const [purchaseDate, setPurchaseDate] = useState(todayISO());
+    const [productStatusMessage, setProductStatusMessage] = useState('');
 
     const eanRef = useRef<HTMLInputElement>(null);
     
     const handleEanInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        let activeProduct: Product | null;
         const value = e.target.value;
-        const activeProduct = await getProductByEAN(value);
-        if (activeProduct) {
+        try {
+            activeProduct = await getProductByEAN(value);
             setActiveProductId(activeProduct.product_id);
             setStorageLocation(activeProduct.default_storage_location ?? '');
             setEanCode(value);
-        } else {
+            setProductStatusMessage(`Product found: ${activeProduct.name}`);
+        } catch (error) {
             setActiveProductId(null);
+            setProductStatusMessage('Couldn\'t find product');
+            if (value.trim() === '') {
+                setProductStatusMessage('');
+            }
         }
     }
 
@@ -59,6 +67,7 @@ const InventoryAdd = () => {
         setQuantity('');
         setExpiryDate('');
         setPurchaseDate(todayISO());
+        setProductStatusMessage('');
 
         setTimeout(() => {
             eanRef.current?.focus();
@@ -90,6 +99,9 @@ const InventoryAdd = () => {
                         EAN Code or Name
                     </label>
                     <input ref={eanRef} type="text" name="" id="eanOrName" placeholder="Enter EAN or name..." value={eanCode} onChange={handleEanChange} onBlur={handleEanInputChange} onKeyDown={eanEnterPress} autoComplete="off" />
+                    <div className="product-status-message">
+                        {productStatusMessage}
+                    </div>
                 </div>
                 <form onSubmit={handleInventorySubmit}>
                     <h6 className="item-details-separator">ITEM DETAILS</h6>
@@ -111,7 +123,7 @@ const InventoryAdd = () => {
                             <input type="text" name="" id="stoageLocation" placeholder="E.g. Pantry, Frige, Freezer" value={storageLocation} onChange={e => setStorageLocation(e.target.value)} />
                         </div>
                     </div>
-                    <button className="add-to-inventory-button">
+                    <button className="add-to-inventory-button" disabled={activeProductId === null ? true : false}>
                         Add to Inventory
                     </button>
                 </form>
