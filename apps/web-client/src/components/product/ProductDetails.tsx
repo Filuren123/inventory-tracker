@@ -1,15 +1,18 @@
 import type { Product } from '../../model/product.interface';
+import './ProductDetails.css';
 
 interface Props {
     product: Product;
     categoryLabel: string;
+    /** Hide the name heading (e.g. when a modal title already shows it). */
+    hideName?: boolean;
 }
 
 const formatSize = (p: Product) =>
     p.package_size != null ? `${Number(p.package_size)}${p.unit ? ` ${p.unit}` : ''}` : null;
 
 /** Read-only summary of a product. */
-const ProductDetails = ({ product, categoryLabel }: Props) => {
+const ProductDetails = ({ product, categoryLabel, hideName }: Props) => {
     const rows: [string, string | null][] = [
         ['Brand', product.brand],
         ['Category', categoryLabel || 'Uncategorised'],
@@ -27,7 +30,7 @@ const ProductDetails = ({ product, categoryLabel }: Props) => {
 
     return (
         <div className="product-details">
-            <h2>{product.name}</h2>
+            {!hideName && <h2>{product.name}</h2>}
             <dl>
                 {rows
                     .filter(([, v]) => v)

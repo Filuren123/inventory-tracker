@@ -10,6 +10,7 @@ import { useToast } from '../../hooks/useToast';
 import type { RichInventory } from '../../model/richInventory';
 import { categoryPath } from '../../utils/categoryTree';
 import LoadMore from '../common/LoadMore';
+import ProductModal from '../product/ProductModal';
 import InventoryFilters from './InventoryFilters';
 import InventoryRow from './InventoryRow';
 import { readFilters, writeFilters, type FilterState } from './filters';
@@ -45,7 +46,7 @@ const InventoryPage = () => {
     const { categories, flat } = useCategories();
     const { locations } = useLocations();
 
-    const { items, total, loading, error, hasMore, loadMore, retry, removeLocal } = useInventoryQuery({
+    const { items, total, loading, error, hasMore, loadMore, retry, reload, removeLocal } = useInventoryQuery({
         q: filters.q,
         category: filters.category,
         location: filters.location,
@@ -54,6 +55,7 @@ const InventoryPage = () => {
     });
 
     const { show: showToast, toast } = useToast();
+    const [openProduct, setOpenProduct] = useState<number | null>(null);
 
     const handleRemove = useCallback(
         async (item: RichInventory) => {
@@ -112,6 +114,7 @@ const InventoryPage = () => {
                                 item={item}
                                 categoryLabel={categoryPath(categories, item.product?.category_id ?? null)}
                                 onRemove={handleRemove}
+                                onOpen={setOpenProduct}
                             />
                         ))}
                     </ul>
@@ -132,6 +135,10 @@ const InventoryPage = () => {
                     itemCount={items.length}
                 />
             </section>
+
+            {openProduct != null && (
+                <ProductModal productId={openProduct} onClose={() => setOpenProduct(null)} onChanged={reload} />
+            )}
 
             {toast}
         </div>

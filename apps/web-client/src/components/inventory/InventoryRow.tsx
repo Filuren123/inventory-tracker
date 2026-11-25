@@ -6,6 +6,8 @@ interface Props {
     item: RichInventory;
     categoryLabel: string;
     onRemove: (item: RichInventory) => Promise<void>;
+    /** Open the product popup */
+    onOpen: (productId: number) => void;
 }
 
 const STATUS_BADGE = {
@@ -15,7 +17,7 @@ const STATUS_BADGE = {
     none: 'badge',
 } as const;
 
-const InventoryRow = ({ item, categoryLabel, onRemove }: Props) => {
+const InventoryRow = ({ item, categoryLabel, onRemove, onOpen }: Props) => {
     const [confirming, setConfirming] = useState(false);
     const [busy, setBusy] = useState(false);
     const product = item.product;
@@ -32,9 +34,17 @@ const InventoryRow = ({ item, categoryLabel, onRemove }: Props) => {
     };
 
     return (
-        <li className="inv-row">
+        <li
+            className="inv-row inv-row--clickable"
+            onClick={(e) => {
+                // The whole row opens the product, except clicks on its own buttons.
+                if (!(e.target as HTMLElement).closest('button')) onOpen(item.product_id);
+            }}
+        >
             <div className="inv-main">
-                <div className="inv-name">{product?.name ?? `Unknown product #${item.product_id}`}</div>
+                <button type="button" className="inv-name" onClick={() => onOpen(item.product_id)}>
+                    {product?.name ?? `Unknown product #${item.product_id}`}
+                </button>
                 <div className="inv-meta">
                     {product?.brand && <span>{product.brand}</span>}
                     <span>{categoryLabel || 'Uncategorised'}</span>

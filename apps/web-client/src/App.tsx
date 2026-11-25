@@ -4,10 +4,11 @@ import InventoryPage from './components/inventory/InventoryPage';
 import InventoryAdd from './components/inventory/InventoryAdd';
 import InventoryRemove from './components/inventory/InventoryRemove';
 import ManagePage from './components/manage/ManagePage';
+import ProductsPage from './components/product/ProductsPage';
 import LoginPage from './components/user/LoginPage';
 import LogoutPage from './components/user/LogoutPage';
 
-// Page paths must not collide with API prefixes (/inventory, /product, /categories, /user):
+// Page paths must not collide with API prefixes (/inventory, /product, /categories, /locations, /user):
 // in production the server would answer a page refresh with API JSON instead of the app.
 function App() {
     return (
@@ -18,6 +19,7 @@ function App() {
                     <Route index element={<InventoryPage />} />
                     <Route path="add" element={<InventoryAdd />} />
                     <Route path="remove" element={<InventoryRemove />} />
+                    <Route path="products" element={<ProductsPage />} />
                     <Route path="manage" element={<ManagePage />} />
                     <Route path="logout" element={<LogoutPage />} />
                     {/* old paths */}

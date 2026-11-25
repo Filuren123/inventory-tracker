@@ -40,3 +40,10 @@
     .product-form { padding: var(--space-3); }
     .product-form-actions .btn { flex: 1; min-height: 2.75rem; }
 }
+
+/* Inside a modal: no own frame */
+.product-form--plain {
+    padding: 0;
+    border: 0;
+    background: none;
+}

@@ -1,11 +1,12 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { ListIcon, LogoutIcon, MinusIcon, PlusIcon, TreeIcon } from './Icons';
+import { BoxIcon, ListIcon, LogoutIcon, MinusIcon, PlusIcon, TreeIcon } from './Icons';
 import './AppShell.css';
 
 const NAV = [
     { to: '/', label: 'Inventory', icon: <ListIcon />, end: true },
     { to: '/add', label: 'Add', icon: <PlusIcon /> },
     { to: '/remove', label: 'Remove', icon: <MinusIcon /> },
+    { to: '/products', label: 'Products', icon: <BoxIcon /> },
     { to: '/manage', label: 'Manage', icon: <TreeIcon /> },
 ];
 

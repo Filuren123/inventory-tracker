@@ -27,7 +27,7 @@ const int = (v: unknown) => {
 
 /**
  * Search, filter, sort and paginate inventory.
- * Query: q, category (includes subcategories), location, sort=name|expiry|added,
+ * Query: q, category (includes subcategories), location, product, sort=name|expiry|added,
  * dir=asc|desc, limit (1-100, default 30), offset.
  */
 inventoryRouter.get('/', async (req: Request, res: Response<InventoryPage | string>) => {
@@ -37,6 +37,7 @@ inventoryRouter.get('/', async (req: Request, res: Response<InventoryPage | stri
             q: str(req.query.q),
             categoryId: int(req.query.category),
             location: str(req.query.location),
+            productId: int(req.query.product),
             sort: sort && SORTS.includes(sort) ? sort : 'name',
             dir: req.query.dir === 'desc' ? 'desc' : 'asc',
             limit: Math.min(Math.max(int(req.query.limit) ?? 30, 1), MAX_LIMIT),
@@ -64,8 +65,11 @@ inventoryRouter.get(
     },
 );
 
+const MAX_COUNT = 50;
+
 /**
- * Create a new inventory item
+ * Create inventory items. `count` (1-50, default 1) adds that many identical items,
+ * e.g. three of the same product with the same expiry. Always returns an array.
  */
 inventoryRouter.post(
     '/add',
@@ -79,9 +83,10 @@ inventoryRouter.post(
                 quantity?: string;
                 expiry_date?: string;
                 purchase_date?: string;
+                count?: number;
             }
         >,
-        res: Response<RichInventory | { message: string }>,
+        res: Response<RichInventory[] | { message: string }>,
     ) => {
         try {
             const { product_id, storage_location, quantity, expiry_date, purchase_date } = req.body;
@@ -90,13 +95,14 @@ inventoryRouter.post(
                     .status(400)
                     .send({ message: 'product_id and storage_location are required.' });
             }
-            const created = await inventoryService.createInventory({
-                product_id,
-                storage_location,
-                quantity,
-                expiry_date,
-                purchase_date,
-            });
+            const count = req.body.count == null ? 1 : Number(req.body.count);
+            if (!Number.isInteger(count) || count < 1 || count > MAX_COUNT) {
+                return res.status(400).send({ message: `count must be a whole number from 1 to ${MAX_COUNT}.` });
+            }
+            const created = await inventoryService.createInventory(
+                { product_id, storage_location, quantity, expiry_date, purchase_date },
+                count,
+            );
             res.status(201).json(created);
         } catch (error: any) {
             fail(res, error);

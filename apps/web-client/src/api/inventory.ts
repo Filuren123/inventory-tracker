@@ -8,6 +8,8 @@ export interface InventoryQuery {
     q?: string;
     category?: number | null;
     location?: string | null;
+    /** Only items of this product */
+    product?: number | null;
     sort?: InventorySort;
     dir?: SortDir;
     limit?: number;
@@ -26,6 +28,7 @@ export async function queryInventory(query: InventoryQuery, signal?: AbortSignal
     if (query.q) params.q = query.q;
     if (query.category != null) params.category = query.category;
     if (query.location) params.location = query.location;
+    if (query.product != null) params.product = query.product;
     if (query.sort) params.sort = query.sort;
     if (query.dir) params.dir = query.dir;
     if (query.limit != null) params.limit = query.limit;
@@ -39,14 +42,18 @@ export async function getInventoryById(id: number): Promise<RichInventory> {
     return res.data;
 }
 
-export async function addInventory(item: {
-    product_id: number;
-    storage_location: string;
-    quantity?: string;
-    expiry_date?: string;
-    purchase_date?: string;
-}): Promise<RichInventory> {
-    const res = await axios.post<RichInventory>('/inventory/add', item);
+/** Adds `count` identical items (default 1); returns every created item. */
+export async function addInventory(
+    item: {
+        product_id: number;
+        storage_location: string;
+        quantity?: string;
+        expiry_date?: string;
+        purchase_date?: string;
+    },
+    count = 1,
+): Promise<RichInventory[]> {
+    const res = await axios.post<RichInventory[]>('/inventory/add', { ...item, count });
     return res.data;
 }
 

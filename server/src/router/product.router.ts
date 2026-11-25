@@ -26,6 +26,26 @@ productRouter.get('/', async (req: Request, res: Response<Product[] | string>) =
 });
 
 /**
+ * Paged product list with stock counts: q, category (incl. subcategories), limit (1-100, default 30), offset.
+ */
+productRouter.get('/list', async (req: Request, res: Response<unknown>) => {
+    try {
+        const int = (v: unknown) => (typeof v === 'string' && /^\d+$/.test(v) ? Number(v) : undefined);
+        const q = typeof req.query.q === 'string' ? req.query.q.trim() : '';
+        res.status(200).json(
+            await productService.queryProducts({
+                q: q || undefined,
+                categoryId: int(req.query.category),
+                limit: Math.min(Math.max(int(req.query.limit) ?? 30, 1), 100),
+                offset: int(req.query.offset) ?? 0,
+            }),
+        );
+    } catch (error: any) {
+        res.status(500).send(error.message);
+    }
+});
+
+/**
  * Get a specific product by EAN code
  */
 productRouter.get(

@@ -113,28 +113,26 @@
     .add-actions .btn { flex: 1; min-height: 2.75rem; }
 }
 
-/* ---------- Product summary ---------- */
-.product-details h2 { margin-bottom: var(--space-3); }
-
-.product-details dl {
+/* ---------- Number of items ---------- */
+.count-stepper {
     display: grid;
-    gap: var(--space-2);
+    grid-template-columns: 2.5rem minmax(0, 1fr) 2.5rem;
+    gap: var(--space-1);
 }
 
-.product-details dl > div {
-    display: grid;
-    grid-template-columns: 9rem minmax(0, 1fr);
-    gap: var(--space-2);
-    font-size: var(--text-sm);
-    padding-bottom: var(--space-2);
-    border-bottom: 1px solid var(--border);
+.count-stepper .btn {
+    min-height: 2.5rem;
+    padding: 0;
+    font-size: 1.125rem;
 }
 
-.product-details dt { color: var(--text-muted); }
-.product-details dd { overflow-wrap: anywhere; }
+.count-stepper .input {
+    text-align: center;
+    -moz-appearance: textfield;
+}
 
-.product-link {
-    display: inline-block;
-    margin-top: var(--space-3);
-    font-size: var(--text-sm);
+.count-stepper .input::-webkit-outer-spin-button,
+.count-stepper .input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }

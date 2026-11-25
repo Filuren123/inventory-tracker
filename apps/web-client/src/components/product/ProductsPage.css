@@ -1,0 +1,92 @@
+.prod-filters {
+    display: grid;
+    grid-template-columns: minmax(14rem, 2fr) minmax(10rem, 1fr);
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+@media (max-width: 559px) {
+    .prod-filters { grid-template-columns: 1fr; }
+}
+
+.prod-list { list-style: none; }
+
+.prod-head,
+.prod-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 10rem 6rem;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+}
+
+.prod-head {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    background: var(--surface-muted);
+    border-bottom: 1px solid var(--border);
+}
+
+.prod-head span:last-child,
+.prod-stock { text-align: right; }
+
+.prod-list li + li { border-top: 1px solid var(--border); }
+
+.prod-row {
+    width: 100%;
+    border: 0;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+}
+
+.prod-row:hover { background: color-mix(in srgb, var(--surface-muted) 50%, transparent); }
+
+.prod-main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.prod-name {
+    font-weight: 550;
+    overflow-wrap: anywhere;
+}
+
+.prod-meta {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+}
+
+.prod-ean { font-family: var(--mono); font-size: 0.75rem; }
+
+.prod-location,
+.prod-stock {
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
+}
+
+.prod-stock-label { display: none; }
+
+/* Phones: name on top, location + stock on one line */
+@media (max-width: 639px) {
+    .prod-head { display: none; }
+
+    .prod-row {
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas: 'main main' 'loc stock';
+        row-gap: var(--space-1);
+        padding: var(--space-3);
+    }
+
+    .prod-main { grid-area: main; }
+    .prod-location { grid-area: loc; color: var(--text-muted); }
+    .prod-stock { grid-area: stock; }
+    .prod-stock-label { display: inline; }
+}

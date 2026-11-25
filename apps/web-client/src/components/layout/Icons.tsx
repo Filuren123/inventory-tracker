@@ -41,3 +41,9 @@ export const LogoutIcon = () => (
         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
     </svg>
 );
+
+export const BoxIcon = () => (
+    <svg {...base}>
+        <path d="M21 8 12 3 3 8v8l9 5 9-5V8zM3 8l9 5 9-5M12 13v8" />
+    </svg>
+);

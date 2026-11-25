@@ -52,10 +52,20 @@
 
 .inv-row:hover { background: color-mix(in srgb, var(--surface-muted) 50%, transparent); }
 
+.inv-row--clickable { cursor: pointer; }
+
 .inv-name {
+    display: block;
+    padding: 0;
+    border: 0;
+    background: none;
     font-weight: 550;
+    text-align: left;
     overflow-wrap: anywhere;
+    cursor: pointer;
 }
+
+.inv-name:hover { text-decoration: underline; }
 
 .inv-meta {
     display: flex;

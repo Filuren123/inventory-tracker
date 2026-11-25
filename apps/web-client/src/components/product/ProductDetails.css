@@ -1,0 +1,24 @@
+.product-details h2 { margin-bottom: var(--space-3); }
+
+.product-details dl {
+    display: grid;
+    gap: var(--space-2);
+}
+
+.product-details dl > div {
+    display: grid;
+    grid-template-columns: 9rem minmax(0, 1fr);
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border);
+}
+
+.product-details dt { color: var(--text-muted); }
+.product-details dd { overflow-wrap: anywhere; }
+
+.product-link {
+    display: inline-block;
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+}

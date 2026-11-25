@@ -4,7 +4,8 @@ import { ProductModel } from '../db/model/product.db.js';
 import { CategoryModel } from '../db/model/category.db.js';
 import type { RichInventory } from '../model/richInventory.js';
 import { CategoryService } from './category.service.js';
-import { StorageLocationService } from './storageLocation.service.js';
+import { StorageLocationService, StorageLocationValidationError } from './storageLocation.service.js';
+import { sequelize } from '../db/conn.js';
 
 export type InventorySort = 'name' | 'expiry' | 'added';
 export type SortDir = 'asc' | 'desc';
@@ -13,6 +14,7 @@ export interface InventoryQuery {
     q?: string;
     categoryId?: number;
     location?: string;
+    productId?: number;
     sort?: InventorySort;
     dir?: SortDir;
     limit: number;
@@ -73,6 +75,9 @@ export class InventoryService {
         if (query.location) {
             (where as any).storage_location = query.location;
         }
+        if (query.productId != null) {
+            (where as any).product_id = query.productId;
+        }
 
         const dir = query.dir === 'desc' ? 'DESC' : 'ASC';
         let order: Order;
@@ -112,21 +117,39 @@ export class InventoryService {
         return instance ? toRich(instance) : null;
     }
 
-    async createInventory(data: {
-        product_id: number;
-        storage_location: string;
-        quantity?: string;
-        expiry_date?: string;
-        purchase_date?: string;
-    }): Promise<RichInventory> {
-        const created = await InventoryModel.create({
+    /** Create `count` identical items (e.g. three of the same product and expiry) in one transaction. */
+    async createInventory(
+        data: {
+            product_id: number;
+            storage_location: string;
+            quantity?: string;
+            expiry_date?: string;
+            purchase_date?: string;
+        },
+        count = 1,
+    ): Promise<RichInventory[]> {
+        if (!(await ProductModel.findByPk(data.product_id))) {
+            throw new StorageLocationValidationError('Product does not exist.');
+        }
+        const values = {
             product_id: data.product_id,
             storage_location: (await this.locations.resolve(data.storage_location))!,
             quantity: data.quantity,
             expiry_date: data.expiry_date ? new Date(data.expiry_date) : null,
             purchase_date: data.purchase_date ? new Date(data.purchase_date) : null,
+        };
+        const created = await sequelize.transaction((transaction) =>
+            InventoryModel.bulkCreate(Array.from({ length: count }, () => ({ ...values })), {
+                transaction,
+                returning: true,
+            }),
+        );
+        const rows = await InventoryModel.findAll({
+            where: { id: created.map((c) => c.id) },
+            include: [productInclude()],
+            order: [['id', 'ASC']],
         });
-        return (await this.getInventoryById(created.id))!;
+        return rows.map(toRich);
     }
 
     async updateInventory(

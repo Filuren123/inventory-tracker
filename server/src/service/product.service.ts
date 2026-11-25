@@ -3,6 +3,8 @@ import { ProductModel } from '../db/model/product.db.js';
 import { CategoryModel } from '../db/model/category.db.js';
 import type { Product } from '../model/product.interface.js';
 import { StorageLocationService } from './storageLocation.service.js';
+import { CategoryService } from './category.service.js';
+import { InventoryModel } from '../db/model/inventory.db.js';
 
 /** Bad input from the client; routers map it to 400 (or `status`). */
 export class ProductValidationError extends Error {
@@ -44,8 +46,11 @@ const num = (v: unknown, field: string): number | null => {
 
 const likeEscape = (s: string) => s.replace(/[\\%_]/g, (m) => `\\${m}`);
 
+export type ProductWithStock = Product & { in_stock: number };
+
 export class ProductService {
     locations = new StorageLocationService();
+    categories = new CategoryService();
 
     async getAllProducts(): Promise<Product[]> {
         return (await ProductModel.findAll()).map(plain);
@@ -70,6 +75,53 @@ export class ProductService {
             limit,
         });
         return rows.map(plain);
+    }
+
+    /**
+     * Paged product list for the products page, with how many items are in stock.
+     * Search covers name / brand / EAN; category includes subcategories.
+     */
+    async queryProducts(query: {
+        q?: string;
+        categoryId?: number;
+        limit: number;
+        offset: number;
+    }): Promise<{ items: ProductWithStock[]; total: number; nextOffset: number | null }> {
+        const where: Record<string | symbol, unknown> = {};
+        if (query.q) {
+            const like = `%${likeEscape(query.q)}%`;
+            where[Op.or] = [
+                { name: { [Op.iLike]: like } },
+                { brand: { [Op.iLike]: like } },
+                { ean_code: { [Op.iLike]: like } },
+            ];
+        }
+        if (query.categoryId != null) {
+            where.category_id = { [Op.in]: [...(await this.categories.getDescendantIds(query.categoryId))] };
+        }
+        const { rows, count } = await ProductModel.findAndCountAll({
+            where,
+            attributes: {
+                include: [
+                    [
+                        literal('(SELECT COUNT(*) FROM "inventory" AS i WHERE i."product_id" = "ProductModel"."product_id")'),
+                        'in_stock',
+                    ],
+                ],
+            },
+            order: [[literal('"name" COLLATE "sv-SE-x-icu"'), 'ASC'], ['product_id', 'ASC']],
+            limit: query.limit,
+            offset: query.offset,
+        });
+        const end = query.offset + rows.length;
+        return {
+            items: rows.map((r) => {
+                const p = plain(r) as ProductWithStock;
+                return { ...p, in_stock: Number(p.in_stock) };
+            }),
+            total: count,
+            nextOffset: end < count ? end : null,
+        };
     }
 
     async getProductById(id: string | number): Promise<Product | null> {
@@ -155,9 +207,17 @@ export class ProductService {
         return plain(product);
     }
 
+    /** Refuses (409) while inventory items of the product exist. */
     async deleteProduct(id: string | number): Promise<boolean> {
         const product = await ProductModel.findByPk(id);
         if (!product) return false;
+        const inStock = await InventoryModel.count({ where: { product_id: product.product_id } });
+        if (inStock > 0) {
+            throw new ProductValidationError(
+                `"${product.name}" has ${inStock} item(s) in the inventory. Remove them first.`,
+                409,
+            );
+        }
         await product.destroy();
         return true;
     }

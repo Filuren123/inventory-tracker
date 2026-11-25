@@ -24,6 +24,8 @@ type Status = { kind: 'success' | 'error'; text: string } | null;
 
 const isDigits = (s: string) => /^\d+$/.test(s);
 
+const MAX_COUNT = 50;
+
 const InventoryAdd = () => {
     // Step 1: find or create the product
     const [term, setTerm] = useState('');
@@ -35,6 +37,7 @@ const InventoryAdd = () => {
     // Step 2: item details
     const [location, setLocation] = useState('');
     const [quantity, setQuantity] = useState('');
+    const [count, setCount] = useState('1');
     const [expiryDate, setExpiryDate] = useState('');
     const [purchaseDate, setPurchaseDate] = useState(todayISO());
     const [saving, setSaving] = useState(false);
@@ -119,6 +122,7 @@ const InventoryAdd = () => {
         lastEan.current = '';
         setLocation('');
         setQuantity('');
+        setCount('1');
         setExpiryDate('');
         setPurchaseDate(todayISO());
         termRef.current?.focus();
@@ -135,17 +139,28 @@ const InventoryAdd = () => {
             setStatus({ kind: 'error', text: 'Choose a storage location.' });
             return;
         }
+        const n = Number(count);
+        if (!Number.isInteger(n) || n < 1 || n > MAX_COUNT) {
+            setStatus({ kind: 'error', text: `Number of items must be 1–${MAX_COUNT}.` });
+            return;
+        }
         setSaving(true);
         setStatus(null);
         try {
-            await addInventory({
-                product_id: selected.product_id,
-                storage_location: location,
-                quantity: quantity.trim() || undefined,
-                expiry_date: expiryDate || undefined,
-                purchase_date: purchaseDate || undefined,
+            const added = await addInventory(
+                {
+                    product_id: selected.product_id,
+                    storage_location: location,
+                    quantity: quantity.trim() || undefined,
+                    expiry_date: expiryDate || undefined,
+                    purchase_date: purchaseDate || undefined,
+                },
+                n,
+            );
+            setStatus({
+                kind: 'success',
+                text: added.length > 1 ? `Added ${added.length} × ${selected.name}.` : `Added ${selected.name}.`,
             });
-            setStatus({ kind: 'success', text: `Added ${selected.name}.` });
             reset();
         } catch (err) {
             setStatus({ kind: 'error', text: errorMessage(err, 'Could not add item') });
@@ -255,11 +270,12 @@ const InventoryAdd = () => {
                     {creating && (
                         <ProductForm
                             key={`${creating.ean_code}|${creating.name}`}
+                            mode="create"
                             initial={creating}
                             categories={flat}
                             locations={locations}
                             onCreateLocation={createLocation}
-                            onCreated={(product) => {
+                            onSaved={(product) => {
                                 select(product);
                                 setStatus({ kind: 'success', text: `Created ${product.name}. Now add the item.` });
                             }}
@@ -310,6 +326,38 @@ const InventoryAdd = () => {
                                         onChange={(e) => setQuantity(e.target.value)}
                                     />
                                 </div>
+                                <div className="field">
+                                    <label htmlFor="count">Number of items</label>
+                                    <div className="count-stepper" role="group" aria-label="Number of items">
+                                        <button
+                                            type="button"
+                                            className="btn"
+                                            aria-label="One fewer"
+                                            onClick={() => setCount((c) => String(Math.max(1, (Number(c) || 1) - 1)))}
+                                        >
+                                            −
+                                        </button>
+                                        <input
+                                            id="count"
+                                            className="input"
+                                            type="number"
+                                            inputMode="numeric"
+                                            min={1}
+                                            max={MAX_COUNT}
+                                            value={count}
+                                            onChange={(e) => setCount(e.target.value)}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="btn"
+                                            aria-label="One more"
+                                            onClick={() => setCount((c) => String(Math.min(MAX_COUNT, (Number(c) || 0) + 1)))}
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+                                    <span className="hint">Same product, dates and location</span>
+                                </div>
                             </div>
 
                             {status && (
@@ -323,7 +371,11 @@ const InventoryAdd = () => {
 
                             <div className="add-actions">
                                 <button type="submit" className="btn btn-primary" disabled={saving || !selected}>
-                                    {saving ? 'Adding…' : 'Add to inventory'}
+                                    {saving
+                                        ? 'Adding…'
+                                        : Number(count) > 1
+                                          ? `Add ${Number(count)} to inventory`
+                                          : 'Add to inventory'}
                                 </button>
                                 <button
                                     type="button"
