@@ -1,0 +1,26 @@
+.manage-jump {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.manage-section + .manage-section {
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--border);
+}
+
+.manage-section h2 { scroll-margin-top: calc(var(--topbar-h) + var(--space-4)); }
+
+.manage-section-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.manage-section-header p {
+    margin-top: var(--space-1);
+    color: var(--text-muted);
+}

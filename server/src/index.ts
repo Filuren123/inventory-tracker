@@ -1,6 +1,7 @@
 import { sequelize } from './db/conn.js';
 import { app } from './start.js';
 import { UserService } from './service/user.service.js';
+import { StorageLocationService } from './service/storageLocation.service.js';
 
 const PORT: number = Number(process.env.PORT ?? 4000);
 
@@ -10,6 +11,10 @@ const userService = new UserService();
     try {
         await sequelize.sync({ alter: true });
         console.log('Database synced successfully');
+
+        // Seed storage_locations from locations already used by inventory/products.
+        const added = await new StorageLocationService().backfillFromExistingData();
+        if (added) console.log(`Added ${added} storage location(s) from existing data`);
 
         const defaultUsername = process.env.ADMIN_USERNAME;
         const defaultPassword = process.env.ADMIN_PASSWORD;

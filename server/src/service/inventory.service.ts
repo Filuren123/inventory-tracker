@@ -1,61 +1,117 @@
+import { Op, literal, type Order, type WhereOptions } from 'sequelize';
 import { InventoryModel } from '../db/model/inventory.db.js';
-import type { Inventory } from '../model/inventory.interface.js';
-import type { Product } from '../model/product.interface.js';
+import { ProductModel } from '../db/model/product.db.js';
+import { CategoryModel } from '../db/model/category.db.js';
 import type { RichInventory } from '../model/richInventory.js';
-import { ProductService } from './product.service.js';
 import { CategoryService } from './category.service.js';
-import type { Category } from '../model/category.interface.js';
+import { StorageLocationService } from './storageLocation.service.js';
+
+export type InventorySort = 'name' | 'expiry' | 'added';
+export type SortDir = 'asc' | 'desc';
+
+export interface InventoryQuery {
+    q?: string;
+    categoryId?: number;
+    location?: string;
+    sort?: InventorySort;
+    dir?: SortDir;
+    limit: number;
+    offset: number;
+}
+
+export interface InventoryPage {
+    items: RichInventory[];
+    total: number;
+    nextOffset: number | null;
+}
+
+const productInclude = (where?: WhereOptions) => ({
+    model: ProductModel,
+    as: 'product',
+    required: true,
+    ...(where ? { where } : {}),
+    include: [{ model: CategoryModel, as: 'category', required: false }],
+});
+
+/** Escape LIKE wildcards so a search for "50%" matches literally. */
+const likeEscape = (s: string) => s.replace(/[\\%_]/g, (m) => `\\${m}`);
+
+function toRich(instance: InventoryModel): RichInventory {
+    const plain: any = instance.get({ plain: true });
+    const { product, ...inventory } = plain;
+    if (!product) return { ...inventory, product: null, category: null };
+    const { category, ...productFields } = product;
+    return { ...inventory, product: productFields, category: category ?? null };
+}
 
 export class InventoryService {
-    productService: ProductService = new ProductService();
-    categoryService: CategoryService = new CategoryService();
-
-    private async convertToRichInventory(inventory: Inventory): Promise<RichInventory> {
-        const product: Product | null = await this.productService.getProductById(inventory.product_id);
-        let category: Category | null = null;
-        if (product != null && product.category_id != null){
-            category = await this.categoryService.getCategoryById(product.category_id);
-        }
-        const richInventory: RichInventory = {
-            ...inventory,
-            product: product,
-            category: category
-        }
-
-        return richInventory;
-    }
-
-    private async convertToRichInventoryArray(inventory: Inventory[]): Promise<RichInventory[]> {
-        const convertedList: RichInventory[] = await Promise.all(
-            inventory.map(inv => this.convertToRichInventory(inv))
-        );
-
-        return convertedList;
-    }
-    
-    /**
-     * Fetch all inventory items
-     */
-    async getAllInventory(): Promise<RichInventory[]> {
-        const instances: InventoryModel[] = await InventoryModel.findAll();
-        const inventory: Inventory[] = instances.map(item => item.get({ plain: true }));
-
-        return this.convertToRichInventoryArray(inventory);
-    }
+    categoryService = new CategoryService();
+    locations = new StorageLocationService();
 
     /**
-     * Fetch a specific inventory item by its primary key ID
+     * Search, filter, sort and paginate inventory items.
+     * Search and filters run in the database, so they cover every item, not just loaded pages.
      */
+    async queryInventory(query: InventoryQuery): Promise<InventoryPage> {
+        const productWhere: Record<string | symbol, unknown> = {};
+
+        if (query.q) {
+            const like = `%${likeEscape(query.q)}%`;
+            productWhere[Op.or] = [
+                { name: { [Op.iLike]: like } },
+                { brand: { [Op.iLike]: like } },
+                { ean_code: { [Op.iLike]: like } },
+            ];
+        }
+
+        if (query.categoryId != null) {
+            const ids = await this.categoryService.getDescendantIds(query.categoryId);
+            productWhere.category_id = { [Op.in]: [...ids] };
+        }
+
+        const where: WhereOptions = {};
+        if (query.location) {
+            (where as any).storage_location = query.location;
+        }
+
+        const dir = query.dir === 'desc' ? 'DESC' : 'ASC';
+        let order: Order;
+        switch (query.sort) {
+            case 'expiry':
+                // Items without an expiry date always go last.
+                order = [['expiry_date', `${dir} NULLS LAST`], ['id', 'ASC']];
+                break;
+            case 'added':
+                order = [['createdAt', dir], ['id', dir]];
+                break;
+            default:
+                // Swedish collation so Å/Ä/Ö sort after Z.
+                order = [[literal('"product"."name" COLLATE "sv-SE-x-icu"'), dir], ['id', 'ASC']];
+        }
+
+        const { rows, count } = await InventoryModel.findAndCountAll({
+            where,
+            include: [productInclude(Reflect.ownKeys(productWhere).length ? productWhere : undefined)],
+            order,
+            limit: query.limit,
+            offset: query.offset,
+            distinct: true,
+            subQuery: false,
+        });
+
+        const end = query.offset + rows.length;
+        return {
+            items: rows.map(toRich),
+            total: count,
+            nextOffset: end < count ? end : null,
+        };
+    }
+
     async getInventoryById(id: string | number): Promise<RichInventory | null> {
-        const instance: InventoryModel | null = await InventoryModel.findByPk(id);
-        if (!instance) return null;
-        const inventoryItem: Inventory = instance.get({ plain: true });
-        return this.convertToRichInventory(inventoryItem);
+        const instance = await InventoryModel.findByPk(id, { include: [productInclude()] });
+        return instance ? toRich(instance) : null;
     }
 
-    /**
-     * Create a brand new inventory entry
-     */
     async createInventory(data: {
         product_id: number;
         storage_location: string;
@@ -63,23 +119,16 @@ export class InventoryService {
         expiry_date?: string;
         purchase_date?: string;
     }): Promise<RichInventory> {
-        const newInventory: InventoryModel = await InventoryModel.create({
+        const created = await InventoryModel.create({
             product_id: data.product_id,
-            storage_location: data.storage_location,
+            storage_location: (await this.locations.resolve(data.storage_location))!,
             quantity: data.quantity,
             expiry_date: data.expiry_date ? new Date(data.expiry_date) : null,
-            purchase_date: data.purchase_date
-                ? new Date(data.purchase_date)
-                : null,
+            purchase_date: data.purchase_date ? new Date(data.purchase_date) : null,
         });
-
-        const newInventoryObj: Inventory = newInventory.get({ plain: true });
-        return this.convertToRichInventory(newInventory);
+        return (await this.getInventoryById(created.id))!;
     }
 
-    /**
-     * Update fields on an existing inventory item
-     */
     async updateInventory(
         id: string | number,
         data: {
@@ -90,40 +139,27 @@ export class InventoryService {
             purchase_date?: string | null;
         },
     ): Promise<RichInventory | null> {
-        const inventoryItem: InventoryModel | null = await InventoryModel.findByPk(id);
-        if (!inventoryItem) return null;
-
-        await inventoryItem.update({
-            product_id: data.product_id ?? inventoryItem.product_id,
+        const item = await InventoryModel.findByPk(id);
+        if (!item) return null;
+        const toDate = (v: string | null | undefined, current: Date | null) =>
+            v === undefined ? current : v ? new Date(v) : null;
+        await item.update({
+            product_id: data.product_id ?? item.product_id,
             storage_location:
-                data.storage_location ?? inventoryItem.storage_location,
-            quantity: data.quantity ?? inventoryItem.quantity,
-            expiry_date:
-                data.expiry_date !== undefined
-                    ? data.expiry_date
-                        ? new Date(data.expiry_date)
-                        : null
-                    : inventoryItem.expiry_date,
-            purchase_date:
-                data.purchase_date !== undefined
-                    ? data.purchase_date
-                        ? new Date(data.purchase_date)
-                        : null
-                    : inventoryItem.purchase_date,
+                data.storage_location !== undefined
+                    ? (await this.locations.resolve(data.storage_location))!
+                    : item.storage_location,
+            quantity: data.quantity ?? item.quantity,
+            expiry_date: toDate(data.expiry_date, item.expiry_date),
+            purchase_date: toDate(data.purchase_date, item.purchase_date),
         });
-
-        const inventoryItemObj: Inventory = inventoryItem.get({ plain: true });
-        return this.convertToRichInventory(inventoryItem);
+        return this.getInventoryById(item.id);
     }
 
-    /**
-     * Delete an inventory record by ID
-     */
     async deleteInventory(id: string | number): Promise<boolean> {
-        const inventoryItem: InventoryModel | null = await InventoryModel.findByPk(id);
-        if (!inventoryItem) return false;
-
-        await inventoryItem.destroy();
+        const item = await InventoryModel.findByPk(id);
+        if (!item) return false;
+        await item.destroy();
         return true;
     }
 }

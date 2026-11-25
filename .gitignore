@@ -30,3 +30,5 @@ apps/*/dist
 .env
 .env.development
 .env.production
+# Database dumps
+*.dump

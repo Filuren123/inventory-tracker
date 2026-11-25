@@ -3,6 +3,9 @@ export interface Inventory {
     product_id: number;
     storage_location: string;
     quantity: string | null;
-    expiry_date: Date | null;
-    purchase_date: Date | null;
+    /** YYYY-MM-DD */
+    expiry_date: string | null;
+    /** YYYY-MM-DD */
+    purchase_date: string | null;
+    createdAt?: string;
 }

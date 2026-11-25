@@ -2,11 +2,24 @@ services:
   app:
     profiles: ["prod-only"]
 
+  caddy:
+    profiles: ["prod-only"]
+
+  # Exposed on 5433 so a server running natively on the host can reach it
+  # (5432 is often taken by a local Postgres install).
+  db:
+    ports:
+      - "5433:5432"
+
   server:
     build:
       context: ./server
       dockerfile: Dockerfile.dev
     env_file: ./server/.env
+    # server/.env targets the host (localhost:5433); inside Docker use the db service.
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
     volumes:
       - ./server:/app
       - /app/node_modules

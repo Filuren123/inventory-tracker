@@ -10,6 +10,7 @@ import { userRouter } from './router/user.router.js';
 import { inventoryRouter } from './router/inventory.router.js';
 import { productRouter } from './router/product.router.js';
 import { categoryRouter } from './router/category.router.js';
+import { storageLocationRouter } from './router/storageLocation.router.js';
 import { authenticateToken } from './middlewares/auth.middleware.js';
 import { fileURLToPath } from 'url';
 
@@ -44,6 +45,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/inventory', authenticateToken, inventoryRouter);
 app.use('/product', authenticateToken, productRouter);
 app.use('/categories', authenticateToken, categoryRouter);
+app.use('/locations', authenticateToken, storageLocationRouter);
 
 app.use((req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'index.html'));

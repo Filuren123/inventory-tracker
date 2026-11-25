@@ -1,0 +1,130 @@
+/* ---------- Filters ---------- */
+.filters {
+    display: grid;
+    grid-template-columns: minmax(14rem, 2fr) repeat(3, minmax(9rem, 1fr));
+    align-items: end;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.filters-clear {
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin-top: calc(-1 * var(--space-1));
+}
+
+@media (max-width: 899px) {
+    .filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .filters-search { grid-column: 1 / -1; }
+}
+
+@media (max-width: 479px) {
+    .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    /* Sort takes the full row under category/location */
+    .filters > .field:nth-child(4) { grid-column: 1 / -1; }
+}
+
+/* ---------- List ---------- */
+.inv-list-panel { overflow: hidden; }
+
+.inv-list { list-style: none; }
+
+.inv-head,
+.inv-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 8rem 10rem 8rem 9.5rem;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+}
+
+.inv-head {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    background: var(--surface-muted);
+    border-bottom: 1px solid var(--border);
+}
+
+.inv-row + .inv-row { border-top: 1px solid var(--border); }
+
+.inv-row:hover { background: color-mix(in srgb, var(--surface-muted) 50%, transparent); }
+
+.inv-name {
+    font-weight: 550;
+    overflow-wrap: anywhere;
+}
+
+.inv-meta {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+}
+
+.inv-ean { font-family: var(--mono); font-size: 0.75rem; }
+
+.inv-cell { font-size: var(--text-sm); min-width: 0; }
+
+.inv-cell-label { display: none; }
+
+.inv-expiry {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.125rem;
+}
+
+.inv-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.inv-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-1);
+}
+
+/* Narrow laptops / tablets: drop the quantity column */
+@media (max-width: 899px) {
+    .inv-head,
+    .inv-row { grid-template-columns: minmax(0, 1fr) 7rem 9rem 9.5rem; }
+    .inv-head span:nth-child(4),
+    .inv-quantity { display: none; }
+}
+
+/* Phones: stacked rows */
+@media (max-width: 639px) {
+    .inv-head { display: none; }
+
+    /* name + action on top, then location · expiry · quantity on one line */
+    .inv-row {
+        grid-template-columns: auto auto minmax(0, 1fr) auto;
+        grid-template-areas:
+            'main main main actions'
+            'loc exp qty qty';
+        column-gap: var(--space-3);
+        row-gap: var(--space-2);
+        padding: var(--space-3);
+    }
+
+    .inv-main { grid-area: main; }
+    .inv-actions { grid-area: actions; align-self: start; }
+    .inv-location { grid-area: loc; }
+    .inv-quantity { grid-area: qty; display: block; color: var(--text-muted); }
+    .inv-quantity--empty { display: none; }
+
+    .inv-expiry {
+        grid-area: exp;
+        flex-direction: row;
+        align-items: center;
+        gap: var(--space-2);
+    }
+
+    .inv-date { display: none; }
+}

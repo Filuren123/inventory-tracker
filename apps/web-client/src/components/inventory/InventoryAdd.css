@@ -1,0 +1,140 @@
+.add-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(16rem, 2fr);
+    gap: var(--space-4);
+    align-items: start;
+}
+
+.add-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    min-width: 0;
+}
+
+/* On narrow screens the product summary moves below; the "✓ name" line under the
+   search box confirms the match where the user is looking. */
+@media (max-width: 799px) {
+    .add-layout { grid-template-columns: 1fr; }
+}
+
+/* ---------- Step 1: find product ---------- */
+.add-find {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.add-find-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    min-height: 1.875rem;
+}
+
+.add-find-label .btn { color: var(--accent); }
+
+.add-selected {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--accent);
+}
+
+.add-missing {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--warning);
+    border-radius: var(--radius);
+    font-size: var(--text-sm);
+}
+
+.add-results {
+    list-style: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.add-results li + li { border-top: 1px solid var(--border); }
+
+.add-results button {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border: 0;
+    background: var(--surface);
+    text-align: left;
+    cursor: pointer;
+}
+
+.add-results button:hover,
+.add-results button:focus-visible { background: var(--surface-muted); }
+
+.add-result-name { font-weight: 500; }
+
+.add-result-meta {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+}
+
+.add-results .add-result-create {
+    color: var(--accent);
+    font-weight: 500;
+}
+
+.add-results-empty {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+}
+
+/* ---------- Step 2: item details ---------- */
+.add-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.add-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+@media (max-width: 479px) {
+    .add-actions .btn { flex: 1; min-height: 2.75rem; }
+}
+
+/* ---------- Product summary ---------- */
+.product-details h2 { margin-bottom: var(--space-3); }
+
+.product-details dl {
+    display: grid;
+    gap: var(--space-2);
+}
+
+.product-details dl > div {
+    display: grid;
+    grid-template-columns: 9rem minmax(0, 1fr);
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border);
+}
+
+.product-details dt { color: var(--text-muted); }
+.product-details dd { overflow-wrap: anywhere; }
+
+.product-link {
+    display: inline-block;
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+}

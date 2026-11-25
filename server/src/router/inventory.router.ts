@@ -1,41 +1,63 @@
 import express, { type Request, type Response } from 'express';
-import { InventoryService } from '../service/inventory.service.js';
-import type { Inventory } from '../model/inventory.interface.js';
+import {
+    InventoryService,
+    type InventoryPage,
+    type InventorySort,
+} from '../service/inventory.service.js';
 import type { RichInventory } from '../model/richInventory.js';
+import { StorageLocationValidationError } from '../service/storageLocation.service.js';
+
+const fail = (res: Response, error: any) =>
+    error instanceof StorageLocationValidationError
+        ? res.status(error.status).send({ message: error.message })
+        : res.status(500).send({ message: error.message || 'Internal Server Error' });
 
 export const inventoryRouter = express.Router();
+
 const inventoryService = new InventoryService();
 
+const SORTS: InventorySort[] = ['name', 'expiry', 'added'];
+const MAX_LIMIT = 100;
+
+const str = (v: unknown) => (typeof v === 'string' && v.trim() ? v.trim() : undefined);
+const int = (v: unknown) => {
+    const n = Number(v);
+    return typeof v === 'string' && v !== '' && Number.isInteger(n) ? n : undefined;
+};
+
 /**
- * Get all inventory items
+ * Search, filter, sort and paginate inventory.
+ * Query: q, category (includes subcategories), location, sort=name|expiry|added,
+ * dir=asc|desc, limit (1-100, default 30), offset.
  */
-inventoryRouter.get(
-    '/',
-    async (req: Request<{}, {}, {}>, res: Response<RichInventory[]>) => {
-        try {
-            const inventory = await inventoryService.getAllInventory();
-            res.status(200).json(inventory);
-        } catch (error: any) {
-            res.status(500).send(error.message);
-        }
-    },
-);
+inventoryRouter.get('/', async (req: Request, res: Response<InventoryPage | string>) => {
+    try {
+        const sort = str(req.query.sort) as InventorySort | undefined;
+        const page = await inventoryService.queryInventory({
+            q: str(req.query.q),
+            categoryId: int(req.query.category),
+            location: str(req.query.location),
+            sort: sort && SORTS.includes(sort) ? sort : 'name',
+            dir: req.query.dir === 'desc' ? 'desc' : 'asc',
+            limit: Math.min(Math.max(int(req.query.limit) ?? 30, 1), MAX_LIMIT),
+            offset: Math.max(int(req.query.offset) ?? 0, 0),
+        });
+        res.status(200).json(page);
+    } catch (error: any) {
+        res.status(500).send(error.message);
+    }
+});
 
 /**
  * Get a specific inventory item by ID
  */
 inventoryRouter.get(
     '/:id',
-    async (req: Request<{ id: string }, {}, {}>, res: Response<RichInventory>) => {
+    async (req: Request<{ id: string }>, res: Response<RichInventory | string>) => {
         try {
-            const inventoryItem = await inventoryService.getInventoryById(
-                req.params.id,
-            );
-
-            if (!inventoryItem) {
-                return res.status(404).send();
-            }
-            res.status(200).json(inventoryItem);
+            const item = await inventoryService.getInventoryById(req.params.id);
+            if (!item) return res.status(404).send();
+            res.status(200).json(item);
         } catch (error: any) {
             res.status(500).send(error.message);
         }
@@ -62,37 +84,22 @@ inventoryRouter.post(
         res: Response<RichInventory | { message: string }>,
     ) => {
         try {
-            const {
-                product_id,
-                storage_location,
-                quantity,
-                expiry_date,
-                purchase_date,
-            } = req.body;
-
-            // Basic validation
+            const { product_id, storage_location, quantity, expiry_date, purchase_date } = req.body;
             if (!product_id || !storage_location) {
                 return res
                     .status(400)
-                    .send({
-                        message:
-                            'product_id and storage_location are required.',
-                    });
+                    .send({ message: 'product_id and storage_location are required.' });
             }
-
-            const newInventory = await inventoryService.createInventory({
+            const created = await inventoryService.createInventory({
                 product_id,
                 storage_location,
                 quantity,
                 expiry_date,
                 purchase_date,
             });
-
-            res.status(201).json(newInventory);
+            res.status(201).json(created);
         } catch (error: any) {
-            res.status(500).send({
-                message: error.message || 'Internal Server Error',
-            });
+            fail(res, error);
         }
     },
 );
@@ -117,36 +124,18 @@ inventoryRouter.put(
         res: Response<RichInventory | { message: string }>,
     ) => {
         try {
-            const {
+            const { product_id, storage_location, quantity, expiry_date, purchase_date } = req.body;
+            const updated = await inventoryService.updateInventory(req.params.id, {
                 product_id,
                 storage_location,
                 quantity,
                 expiry_date,
                 purchase_date,
-            } = req.body;
-
-            const updatedInventory = await inventoryService.updateInventory(
-                req.params.id,
-                {
-                    product_id,
-                    storage_location,
-                    quantity,
-                    expiry_date,
-                    purchase_date,
-                },
-            );
-
-            if (!updatedInventory) {
-                return res
-                    .status(404)
-                    .send({ message: 'Inventory item not found' });
-            }
-
-            res.status(200).json(updatedInventory);
-        } catch (error: any) {
-            res.status(500).send({
-                message: error.message || 'Internal Server Error',
             });
+            if (!updated) return res.status(404).send({ message: 'Inventory item not found' });
+            res.status(200).json(updated);
+        } catch (error: any) {
+            fail(res, error);
         }
     },
 );
@@ -156,28 +145,13 @@ inventoryRouter.put(
  */
 inventoryRouter.delete(
     '/:id',
-    async (
-        req: Request<{ id: string }, {}, {}>,
-        res: Response<{ message: string }>,
-    ) => {
+    async (req: Request<{ id: string }>, res: Response<{ message: string }>) => {
         try {
-            const isDeleted = await inventoryService.deleteInventory(
-                req.params.id,
-            );
-
-            if (!isDeleted) {
-                return res
-                    .status(404)
-                    .send({ message: 'Inventory item not found' });
-            }
-
-            res.status(200).send({
-                message: `Inventory item ${req.params.id} successfully deleted.`,
-            });
+            const deleted = await inventoryService.deleteInventory(req.params.id);
+            if (!deleted) return res.status(404).send({ message: 'Inventory item not found' });
+            res.status(200).send({ message: `Inventory item ${req.params.id} successfully deleted.` });
         } catch (error: any) {
-            res.status(500).send({
-                message: error.message || 'Internal Server Error',
-            });
+            fail(res, error);
         }
     },
 );

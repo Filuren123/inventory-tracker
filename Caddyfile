@@ -1,7 +1,7 @@
-filiplundberg.se, www.filiplundberg.se {
+# Only used by this repo's docker-compose.yml (standalone setup with its own Caddy).
+# On the VPS the app runs behind the shared proxy in /srv/proxy instead, whose
+# Caddyfile has the same block pointing at the `inv` container:
+#   inv.filiplundberg.se { reverse_proxy inv:8080 }
+inv.filiplundberg.se {
     reverse_proxy app:8080
 }
-
-/* api.yourdomain.com {
-    reverse_proxy app:8080
-} */

@@ -1,52 +1,35 @@
-import './App.css'
-import {
-    BrowserRouter as Router,
-    Routes,
-    Route,
-    Navigate,
-} from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import AppShell from './components/layout/AppShell';
+import InventoryPage from './components/inventory/InventoryPage';
+import InventoryAdd from './components/inventory/InventoryAdd';
+import InventoryRemove from './components/inventory/InventoryRemove';
+import ManagePage from './components/manage/ManagePage';
+import LoginPage from './components/user/LoginPage';
+import LogoutPage from './components/user/LogoutPage';
 
-import InventoryPage from './components/inventory/inventoryPage/InventoryPage';
-import InventoryAddRem from './components/inventory/inventoryAddRem/InventoryAddRem';
-import InventoryRem from './components/inventory/inventoryAddRem/inventoryRem/InventoryRem';
-import LoginPage from './components/user/login';
-import LogoutPage from './components/user/logout';
-import CategoryManager from './components/categories/categoryManager/CategoryManager';
-import InventoryAdd from './components/inventory/inventoryAddRem/inventoryAdd/InventoryAdd';
-
+// Page paths must not collide with API prefixes (/inventory, /product, /categories, /user):
+// in production the server would answer a page refresh with API JSON instead of the app.
 function App() {
-	return (
-		<>
-			<Router>
-				<Routes>
-					<Route
-						path="/"
-						element={<InventoryPage />}
-					/>
-					<Route
-						path="addItem"
-						element={<InventoryAdd />}
-					/>
-					<Route
-						path="remItem"
-						element={<InventoryRem />}
-					/>
-					<Route
-						path="login"
-						element={<LoginPage />}
-					/>
-					<Route
-						path="logout"
-						element={<LogoutPage />}
-					/>
-					<Route
-						path="categorymanager"
-						element={<CategoryManager />}
-					/>
-				</Routes>
-			</Router>
-		</>
-	)
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="login" element={<LoginPage />} />
+                <Route element={<AppShell />}>
+                    <Route index element={<InventoryPage />} />
+                    <Route path="add" element={<InventoryAdd />} />
+                    <Route path="remove" element={<InventoryRemove />} />
+                    <Route path="manage" element={<ManagePage />} />
+                    <Route path="logout" element={<LogoutPage />} />
+                    {/* old paths */}
+                    <Route path="addItem" element={<Navigate to="/add" replace />} />
+                    <Route path="remItem" element={<Navigate to="/remove" replace />} />
+                    <Route path="categorymanager" element={<Navigate to="/manage" replace />} />
+                    <Route path="manage-categories" element={<Navigate to="/manage" replace />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                </Route>
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
-export default App
+export default App;

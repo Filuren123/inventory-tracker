@@ -8,20 +8,6 @@ const userService = new UserService();
 
 export const userRouter = express.Router();
 
-userRouter.get(
-    '/:username',
-    async (req: Request<{ username: string }, {}, {}>, res: Response<User>) => {
-        try {
-            const user: User = await userService.getUserByUsername(
-                req.params.username,
-            );
-            res.status(200).send(user);
-        } catch (error: any) {
-            res.status(500).send(error.message);
-        }
-    },
-);
-
 userRouter.post(
     '/login',
     async (
@@ -41,7 +27,8 @@ userRouter.post(
             }
 
             const user = { username };
-            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET!);
+            // Expire with the cookie, so a leaked token stops working too.
+            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET!, { expiresIn: '14d' });
 
             res.cookie('accessToken', accessToken, {
                 httpOnly: true,
@@ -65,3 +52,20 @@ userRouter.post('/logout', (_req, res) => {
 userRouter.get('/me', authenticateToken, (req: Request, res: Response) => {
     res.json({ user: (req as any).user });
 });
+
+/**
+ * Look up a user. Requires login and never returns the password.
+ * Registered after /me so "/me" isn't treated as a username.
+ */
+userRouter.get(
+    '/:username',
+    authenticateToken,
+    async (req: Request<{ username: string }>, res: Response<Omit<User, 'password'> | string>) => {
+        try {
+            const { password: _password, ...user } = await userService.getUserByUsername(req.params.username);
+            res.status(200).send(user);
+        } catch {
+            res.status(404).send('User not found');
+        }
+    },
+);
